@@ -130,9 +130,9 @@ namespace BriefingRoom4DCSWorld.DB
         /// Returns a valid unit family for this objective, or defaults to <see cref="UnitFamily.VehicleTransport"/>
         /// </summary>
         /// <returns>An unit family</returns>
-        public UnitFamily GetRandomUnitFamily()
+        public UnitFamily? GetRandomUnitFamily()
         {
-            return  (UnitGroup.Families.Length > 0) ? Toolbox.RandomFrom(UnitGroup.Families) : UnitFamily.VehicleTransport;
+            return (UnitGroup.Families.Length > 0) ? (UnitFamily?)Toolbox.RandomFrom(UnitGroup.Families) : null;
         }
     }
 }

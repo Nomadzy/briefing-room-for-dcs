@@ -80,7 +80,9 @@ namespace BriefingRoom4DCSWorld.Generator
             string description = GeneratorTools.SanitizeString(template.BriefingDescription);
             if (string.IsNullOrEmpty(description)) // No custom mission description has been provided, generate one
             {
-                description = objectiveDB.BriefingDescriptionByUnitFamily[(int)mission.Objectives[0].TargetFamily];
+                if (mission.Objectives[0].TargetFamily.HasValue)
+                    description = objectiveDB.BriefingDescriptionByUnitFamily[(int)mission.Objectives[0].TargetFamily.Value];
+                
                 if (string.IsNullOrEmpty(description)) // No custom briefing for this target family, use the default
                     description = objectiveDB.BriefingDescription;
 

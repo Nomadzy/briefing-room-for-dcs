@@ -90,7 +90,7 @@ namespace BriefingRoom4DCSWorld.Generator
             Coordinates lastCoordinates = mission.InitialPosition;
 
             // Common family to use for all objectives if DBEntryObjectiveFlags.SingleTargetUnitFamily is set
-            UnitFamily singleObjectiveUnitFamily = objectiveDB.GetRandomUnitFamily();
+            UnitFamily? singleObjectiveUnitFamily = objectiveDB.GetRandomUnitFamily();
 
             for (int i = 0; i < template.ObjectiveCount; i++)
             {
@@ -139,7 +139,7 @@ namespace BriefingRoom4DCSWorld.Generator
                     Coordinates.CreateRandom(objectiveDB.WaypointInaccuracy * Toolbox.NM_TO_METERS);
 
                 // Select an objective family for the target if any or default to VehicleTransport.
-                UnitFamily objectiveUnitFamily = singleObjectiveUnitFamily;
+                UnitFamily? objectiveUnitFamily = singleObjectiveUnitFamily;
 
                 if (!objectiveDB.Flags.HasFlag(DBEntryObjectiveFlags.SingleTargetUnitFamily))
                     objectiveUnitFamily = objectiveDB.GetRandomUnitFamily();
