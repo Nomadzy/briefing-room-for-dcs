@@ -77,6 +77,11 @@ namespace BriefingRoom4DCSWorld.DB
         /// <summary>
         /// Aircraft should be manually activated by a script, and not added to the queue of aircraft groups to activate
         /// </summary>
-        ManualActivation = 512
+        ManualActivation = 512,
+
+        /// <summary>
+        /// Spawn this group only once for the mission, not once for each objective (only valid for <see cref="DBEntryMissionFeature"/> groups, not <see cref="DBEntryObjective"/> ones.
+        /// </summary>
+        SpawnOnlyOnce = 1024,
     }
 }

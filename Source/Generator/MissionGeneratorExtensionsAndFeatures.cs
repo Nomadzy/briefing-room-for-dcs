@@ -105,6 +105,12 @@ namespace BriefingRoom4DCSWorld.Generator
                             case DBEntryMissionFeatureUnitGroupLocation.ObjectiveNear:
                                 coordinates[j] = mission.Objectives[i].Coordinates + Coordinates.CreateRandom(1.5, 4) * Toolbox.NM_TO_METERS;
                                 break;
+                            case DBEntryMissionFeatureUnitGroupLocation.ObjectiveCenter:
+                                coordinates[j] = mission.ObjectivesCenter;
+                                break;
+                            case DBEntryMissionFeatureUnitGroupLocation.ObjectiveCenterNear:
+                                coordinates[j] = mission.ObjectivesCenter + Coordinates.CreateRandom(1.5, 4) * Toolbox.NM_TO_METERS;
+                                break;
                             case DBEntryMissionFeatureUnitGroupLocation.Waypoint:
                                 coordinates[j] = mission.Objectives[i].WaypointCoordinates;
                                 break;
@@ -129,6 +135,10 @@ namespace BriefingRoom4DCSWorld.Generator
                     if (!feature.UnitGroup.Flags.HasFlag(DBUnitGroupFlags.ManualActivation) &&
                         ((group.Category == UnitCategory.Helicopter) || (group.Category == UnitCategory.Plane) || feature.UnitGroup.Flags.HasFlag(DBUnitGroupFlags.DelaySpawn)))
                         mission.AircraftSpawnQueue.Add(new DCSMissionAircraftSpawnQueueItem(group.GroupID, true));
+
+                    // Spawn only once, not once for each objective
+                    if (feature.UnitGroup.Flags.HasFlag(DBUnitGroupFlags.SpawnOnlyOnce))
+                        break;
                 }
 
                 if (unitGroupsID.Count > 0)

@@ -22,10 +22,39 @@ namespace BriefingRoom4DCSWorld.DB
 {
     public enum DBEntryMissionFeatureUnitGroupLocation
     {
+        /// <summary>
+        /// Spawn near the players home base.
+        /// </summary>
         Homebase,
+
+        /// <summary>
+        /// Spawn ON TOP OF each objective.
+        /// </summary>
         Objective,
+
+        /// <summary>
+        /// Spawn a few nautical miles away from the objective.
+        /// </summary>
         ObjectiveNear,
+
+        /// <summary>
+        /// Spawn ON TOP OF the objectives center.
+        /// </summary>
+        ObjectiveCenter,
+
+        /// <summary>
+        /// Spawn a few nautical miles away from the objectives center.
+        /// </summary>
+        ObjectiveCenterNear,
+
+        /// <summary>
+        /// Spawn ON TOP OF each objective waypoint.
+        /// </summary>
         Waypoint,
-        WaypointNear,
+
+        /// <summary>
+        /// Spawn a few nautical miles away from each objective waypoint.
+        /// </summary>
+        WaypointNear
     }
 }
