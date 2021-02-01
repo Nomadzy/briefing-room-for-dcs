@@ -29,7 +29,7 @@ function briefingRoom.mission.features.friendlyTransportHelicopter.goToCoordinat
   end
 
   local ctrl = transportHeloGroup:getController()
-  local landTask = { id= 'Land', params = { point = destination, durationFlag = false, duration = 3600 } }
+  local landTask = { ["id"] = "Land", ["params"] = { ["x"] = destination.x, ["y"] = destination.z, ["durationFlag"] = false, ["duration"] = 300 } }
   ctrl:setTask(landTask)
 end
 
