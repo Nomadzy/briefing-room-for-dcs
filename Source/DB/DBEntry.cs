@@ -37,12 +37,17 @@ namespace BriefingRoom4DCSWorld.DB
         /// <summary>
         /// Human-readable display name to show in the UI instead of the ID.
         /// </summary>
-        public string DisplayName { get; private set; }
+        public string GUIDisplayName { get; private set; }
 
         /// <summary>
         /// Description to show in the UI.
         /// </summary>
-        public string Description { get; private set; }
+        public string GUIDescription { get; private set; }
+
+        /// <summary>
+        /// Parent directory in the UI context menu.
+        /// </summary>
+        public string GUIParentDirectory { get; private set; }
 
         /// <summary>
         /// Constructor.
@@ -61,11 +66,12 @@ namespace BriefingRoom4DCSWorld.DB
 
             using (INIFile ini = new INIFile(iniFilePath))
             {
-                DisplayName = ini.GetValue<string>("GUI", "DisplayName");
-                Description = ini.GetValue<string>("GUI", "Description");
+                GUIDisplayName = ini.GetValue<string>("GUI", "DisplayName");
+                GUIDescription = ini.GetValue<string>("GUI", "Description");
+                GUIParentDirectory = ini.GetValue<string>("GUI", "ParentDirectory");
      
-                if (string.IsNullOrEmpty(DisplayName)) DisplayName = ID;
-                if (string.IsNullOrEmpty(Description)) Description = DisplayName;
+                if (string.IsNullOrEmpty(GUIDisplayName)) GUIDisplayName = ID;
+                if (string.IsNullOrEmpty(GUIDescription)) GUIDescription = GUIDisplayName;
             }
 
             return OnLoad(iniFilePath);
