@@ -35,6 +35,16 @@ namespace BriefingRoom4DCSWorld.DB
         public string ID { get; private set; }
 
         /// <summary>
+        /// Human-readable display name to show in the UI instead of the ID.
+        /// </summary>
+        public string DisplayName { get; private set; }
+
+        /// <summary>
+        /// Description to show in the UI.
+        /// </summary>
+        public string Description { get; private set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public DBEntry() { }
@@ -48,6 +58,16 @@ namespace BriefingRoom4DCSWorld.DB
         public bool Load(string id, string iniFilePath)
         {
             ID = id;
+
+            using (INIFile ini = new INIFile(iniFilePath))
+            {
+                DisplayName = ini.GetValue<string>("GUI", "DisplayName");
+                Description = ini.GetValue<string>("GUI", "Description");
+     
+                if (string.IsNullOrEmpty(DisplayName)) DisplayName = ID;
+                if (string.IsNullOrEmpty(Description)) Description = DisplayName;
+            }
+
             return OnLoad(iniFilePath);
         }
 

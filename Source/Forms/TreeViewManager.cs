@@ -52,7 +52,9 @@ namespace BriefingRoom4DCSWorld.Forms
         {
             Tree.Nodes.Clear();
 
-            AddNode("Context", "context");
+            AddNode("Coaltions", "coalitions");
+            AddNode("", "coalitions", "coalitionBlue");
+            AddNode("", "coalitions", "coalitionRed");
 
             AddNode("", "objective");
             AddNode("", "objective", "objectiveCount");
@@ -68,6 +70,9 @@ namespace BriefingRoom4DCSWorld.Forms
 
         public void RefreshAll()
         {
+            GetNode("coalitions", "coalitionBlue").Text = $"Blue coalition: {Template.ContextCoalitionBlue}";
+            GetNode("coalitions", "coalitionRed").Text = $"Red coalition: {Template.ContextCoalitionRed}";
+
             GetNode("objective").Text = $"Objective: {Template.ObjectiveType}";
             GetNode("objective", "objectiveCount").Text = $"Count: {Template.ObjectiveCount}";
             GetNode("objective", "objectiveDistance").Text = $"Distance: {((Template.ObjectiveDistanceNM == 0) ? "Random" : $"{Template.ObjectiveDistanceNM} nm")}";
@@ -130,6 +135,8 @@ namespace BriefingRoom4DCSWorld.Forms
 
             switch (Tree.SelectedNode.Name)
             {
+                case "coalitionBlue": Template.ContextCoalitionBlue = (string)e.ClickedItem.Tag; break;
+                case "coalitionRed": Template.ContextCoalitionRed = (string)e.ClickedItem.Tag; break;
                 case "objective": Template.ObjectiveType = (string)e.ClickedItem.Tag; break;
                 case "objectiveCount": Template.ObjectiveCount = (int)e.ClickedItem.Tag; break;
                 case "objectiveDistance": Template.ObjectiveDistanceNM = (int)e.ClickedItem.Tag; break;
@@ -145,6 +152,9 @@ namespace BriefingRoom4DCSWorld.Forms
 
             switch (nodePath.Last())
             {
+                case "coalitionBlue":
+                case "coalitionRed":
+                    AddDBEntriesToContextMenu<DBEntryCoalition>(ContextMenu.Items); break;
                 case "objective": AddDBEntriesToContextMenu<DBEntryObjective>(ContextMenu.Items); break;
                 case "objectiveCount": AddIntegerToContextMenu(ContextMenu.Items, 1, TemplateTools.MAX_OBJECTIVES, 1); break;
                 case "objectiveDistance": AddIntegerToContextMenu(ContextMenu.Items, TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 20, "%inm", true); break;
@@ -163,7 +173,11 @@ namespace BriefingRoom4DCSWorld.Forms
                 itemCollection.Add("(Random)").Tag = "";
 
             foreach (T entry in Database.Instance.GetAllEntries<T>())
-                itemCollection.Add(entry.ID).Tag = entry.ID;
+            {
+                ToolStripItem tsi = itemCollection.Add(entry.DisplayName);
+                tsi.Tag = entry.ID;
+                tsi.ToolTipText = entry.Description;
+            }
         }
 
         private void AddEnumToContextMenu<T>(ToolStripItemCollection itemCollection) where T : struct
