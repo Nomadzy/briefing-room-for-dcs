@@ -40,6 +40,8 @@ namespace BriefingRoom4DCSWorld.Forms
         private readonly MissionGenerator Generator;
         private readonly MissionTemplate Template;
         private DCSMission Mission = null;
+
+        private readonly TreeViewManager TreeViewMaker;
         
         public MainForm()
         {
@@ -47,6 +49,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
             Generator = new MissionGenerator();
             Template = new MissionTemplate();
+            TreeViewMaker = new TreeViewManager(Template, TemplateTreeView);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -60,7 +63,6 @@ namespace BriefingRoom4DCSWorld.Forms
 
             Icon = GUITools.GetIconFromResource("Icon.ico");
             LoadIcons();
-            TemplatePropertyGrid.SelectedObject = Template;
             GenerateMission();
         }
 
@@ -133,7 +135,7 @@ namespace BriefingRoom4DCSWorld.Forms
                 case "M_File_New":
                 case "T_File_New":
                     Template.Clear();
-                    TemplatePropertyGrid.Refresh();
+                    TreeViewMaker.RefreshAll();
                     GenerateMission();
                     return;
                 case "M_File_Open":
@@ -145,7 +147,7 @@ namespace BriefingRoom4DCSWorld.Forms
                         if ((ofd.ShowDialog() == DialogResult.OK) && File.Exists(ofd.FileName))
                         {
                             Template.LoadFromFile(ofd.FileName);
-                            TemplatePropertyGrid.Refresh();
+                            TreeViewMaker.RefreshAll();
                             GenerateMission();
                         }
                     }

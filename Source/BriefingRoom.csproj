@@ -81,6 +81,7 @@
     <Compile Include="Forms\CampaignCreatorForm.Designer.cs">
       <DependentUpon>CampaignCreatorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TreeViewManager.cs" />
     <Compile Include="Media\ImageMaker.cs" />
     <Compile Include="Media\ImageMakerLayer.cs" />
     <Compile Include="Media\ImageMakerTextOverlay.cs" />

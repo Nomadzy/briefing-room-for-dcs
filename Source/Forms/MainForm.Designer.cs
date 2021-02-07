@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MenuStripMain = new System.Windows.Forms.MenuStrip();
             this.M_File = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,8 +49,8 @@
             this.BottomStatusStrip = new System.Windows.Forms.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.TemplatePropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.TemplateTreeView = new System.Windows.Forms.TreeView();
+            this.TemplateToolStrip = new System.Windows.Forms.ToolStrip();
             this.T_File_New = new System.Windows.Forms.ToolStripButton();
             this.T_File_Open = new System.Windows.Forms.ToolStripButton();
             this.T_File_SaveAs = new System.Windows.Forms.ToolStripButton();
@@ -60,13 +61,14 @@
             this.T_Mission_Export = new System.Windows.Forms.ToolStripButton();
             this.T_Mission_ExportBriefing = new System.Windows.Forms.ToolStripDropDownButton();
             this.T_Mission_ExportBriefingHTML = new System.Windows.Forms.ToolStripMenuItem();
+            this.TemplateContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MenuStripMain.SuspendLayout();
             this.BottomStatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
             this.MainSplitContainer.Panel1.SuspendLayout();
             this.MainSplitContainer.Panel2.SuspendLayout();
             this.MainSplitContainer.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.TemplateToolStrip.SuspendLayout();
             this.BriefingPanel.SuspendLayout();
             this.BriefingToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -234,8 +236,8 @@
             // 
             // MainSplitContainer.Panel1
             // 
-            this.MainSplitContainer.Panel1.Controls.Add(this.TemplatePropertyGrid);
-            this.MainSplitContainer.Panel1.Controls.Add(this.toolStrip1);
+            this.MainSplitContainer.Panel1.Controls.Add(this.TemplateTreeView);
+            this.MainSplitContainer.Panel1.Controls.Add(this.TemplateToolStrip);
             // 
             // MainSplitContainer.Panel2
             // 
@@ -245,28 +247,29 @@
             this.MainSplitContainer.SplitterDistance = 326;
             this.MainSplitContainer.TabIndex = 4;
             // 
-            // TemplatePropertyGrid
+            // TemplateTreeView
             // 
-            this.TemplatePropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TemplatePropertyGrid.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TemplatePropertyGrid.Location = new System.Drawing.Point(0, 25);
-            this.TemplatePropertyGrid.Name = "TemplatePropertyGrid";
-            this.TemplatePropertyGrid.Size = new System.Drawing.Size(326, 490);
-            this.TemplatePropertyGrid.TabIndex = 1;
-            this.TemplatePropertyGrid.ToolbarVisible = false;
-            this.TemplatePropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.TemplatePropertyGrid_PropertyValueChanged);
+            this.TemplateTreeView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(133)))), ((int)(((byte)(203)))));
+            this.TemplateTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TemplateTreeView.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TemplateTreeView.ForeColor = System.Drawing.Color.White;
+            this.TemplateTreeView.Location = new System.Drawing.Point(0, 25);
+            this.TemplateTreeView.Name = "TemplateTreeView";
+            this.TemplateTreeView.ShowNodeToolTips = true;
+            this.TemplateTreeView.Size = new System.Drawing.Size(326, 490);
+            this.TemplateTreeView.TabIndex = 1;
             // 
-            // toolStrip1
+            // TemplateToolStrip
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TemplateToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.T_File_New,
             this.T_File_Open,
             this.T_File_SaveAs});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(326, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            this.TemplateToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.TemplateToolStrip.Name = "TemplateToolStrip";
+            this.TemplateToolStrip.Size = new System.Drawing.Size(326, 25);
+            this.TemplateToolStrip.TabIndex = 0;
+            this.TemplateToolStrip.Text = "toolStrip1";
             // 
             // T_File_New
             // 
@@ -362,6 +365,11 @@
             this.T_Mission_ExportBriefingHTML.Text = "Export briefing to HTML";
             this.T_Mission_ExportBriefingHTML.Click += new System.EventHandler(this.MenuClick);
             // 
+            // TemplateContextMenuStrip
+            // 
+            this.TemplateContextMenuStrip.Name = "TemplateContextMenuStrip";
+            this.TemplateContextMenuStrip.Size = new System.Drawing.Size(61, 4);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -387,8 +395,8 @@
             this.MainSplitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).EndInit();
             this.MainSplitContainer.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.TemplateToolStrip.ResumeLayout(false);
+            this.TemplateToolStrip.PerformLayout();
             this.BriefingPanel.ResumeLayout(false);
             this.BriefingToolStrip.ResumeLayout(false);
             this.BriefingToolStrip.PerformLayout();
@@ -422,13 +430,14 @@
         private System.Windows.Forms.ToolStripDropDownButton T_Mission_ExportBriefing;
         private System.Windows.Forms.ToolStripMenuItem T_Mission_ExportBriefingHTML;
         private System.Windows.Forms.ToolStripMenuItem M_Mission_ExportBriefingHTML;
-        private System.Windows.Forms.PropertyGrid TemplatePropertyGrid;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip TemplateToolStrip;
         private System.Windows.Forms.ToolStripButton T_File_New;
         private System.Windows.Forms.ToolStripButton T_File_Open;
         private System.Windows.Forms.ToolStripButton T_File_SaveAs;
         private System.Windows.Forms.ToolStripMenuItem M_Mission_DebugExport;
         private System.Windows.Forms.ToolStripMenuItem M_Tools;
         private System.Windows.Forms.ToolStripMenuItem M_Tools_CampaignCreator;
+        private System.Windows.Forms.TreeView TemplateTreeView;
+        private System.Windows.Forms.ContextMenuStrip TemplateContextMenuStrip;
     }
 }
