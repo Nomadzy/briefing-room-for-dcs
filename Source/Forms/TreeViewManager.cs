@@ -52,7 +52,7 @@ namespace BriefingRoom4DCSWorld.Forms
         {
             Tree.Nodes.Clear();
 
-            AddNode("Coaltions", "coalitions");
+            AddNode("Coalitions", "coalitions");
             AddNode("", "coalitions", "coalitionBlue");
             AddNode("", "coalitions", "coalitionRed");
 
@@ -63,9 +63,15 @@ namespace BriefingRoom4DCSWorld.Forms
             AddNode("", "theater");
             AddNode("", "theater", "theaterCountries");
 
-            Tree.Nodes.Add("theater", "");
+            AddNode("", "timeOfDay");
+
+            AddNode("", "weather");
+            AddNode("", "weather", "weatherWind");
 
             Tree.NodeMouseClick += OnNodeMouseClick;
+
+            Tree.Nodes["coalitions"].Expand();
+            Tree.Nodes["objective"].Expand();
         }
 
         public void RefreshAll()
@@ -78,11 +84,12 @@ namespace BriefingRoom4DCSWorld.Forms
             GetNode("objective", "objectiveDistance").Text = $"Distance: {((Template.ObjectiveDistanceNM == 0) ? "Random" : $"{Template.ObjectiveDistanceNM} nm")}";
 
             GetNode("theater").Text = $"Theater: {Template.TheaterID}";
-            //GetNode("theater", "theaterCountries").Text = $"Countries: {Template.TheaterRegionsCoalitions}";
+            GetNode("theater", "theaterCountries").Text = $"Countries alignment: {Template.TheaterRegionsCoalitions}";
 
-            //TemplateTreeView.Nodes["objective"].Text = "Objective: " + Template.ObjectiveType;
-            //TemplateTreeView.Nodes["objective"].Nodes["objectiveDistance"].Text = "Distance: " + ((Template.ObjectiveDistanceNM == 0) ? "Random" : $"{Template.ObjectiveDistanceNM} nm");
-            //TemplateTreeView.Nodes["theater"].Text = "Theater: " + Template.TheaterID;
+            GetNode("timeOfDay").Text = $"Time of day: {Toolbox.SplitCamelCase(Template.EnvironmentTimeOfDay)}";
+
+            GetNode("weather").Text = $"Weather: {Toolbox.SplitCamelCase(Template.EnvironmentWeather)}";
+            GetNode("weather", "weatherWind").Text = $"Wind: {Toolbox.SplitCamelCase(Template.EnvironmentWind)}";
         }
 
         //private void SetNodeText(string text, params string[] nodePath)
@@ -92,6 +99,14 @@ namespace BriefingRoom4DCSWorld.Forms
 
         //    node.Text = text;
         //}
+
+        private void SetNodeToolTip(string toolTip, params string[] nodePath)
+        {
+            TreeNode node = GetNode(nodePath);
+            if (node == null) return;
+
+            node.ToolTipText = toolTip;
+        }
 
         private void AddNode(string text, params string[] nodePath)
         {
@@ -130,7 +145,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
         private void OnContextMenuItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if ((Tree.SelectedNode == null) || (e.ClickedItem == null))
+            if ((Tree.SelectedNode == null) || (e.ClickedItem == null) || (e.ClickedItem.Tag == null))
                 return;
 
             switch (Tree.SelectedNode.Name)
@@ -157,7 +172,7 @@ namespace BriefingRoom4DCSWorld.Forms
                     AddDBEntriesToContextMenu<DBEntryCoalition>(ContextMenu.Items); break;
                 case "objective": AddDBEntriesToContextMenu<DBEntryObjective>(ContextMenu.Items); break;
                 case "objectiveCount": AddIntegerToContextMenu(ContextMenu.Items, 1, TemplateTools.MAX_OBJECTIVES, 1); break;
-                case "objectiveDistance": AddIntegerToContextMenu(ContextMenu.Items, TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 20, "%inm", true); break;
+                case "objectiveDistance": AddIntegerToContextMenu(ContextMenu.Items, TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 20, "%inm", 0); break;
                 case "theater": AddDBEntriesToContextMenu<DBEntryTheater>(ContextMenu.Items); break;
                 case "theaterCountries": AddEnumToContextMenu<CountryCoalition>(ContextMenu.Items); break;
             }
@@ -172,24 +187,46 @@ namespace BriefingRoom4DCSWorld.Forms
             if (addRandomOption)
                 itemCollection.Add("(Random)").Tag = "";
 
+            ToolStripMenuItem tsmi;
+
             foreach (T entry in Database.Instance.GetAllEntries<T>())
             {
-                ToolStripItem tsi = itemCollection.Add(entry.DisplayName);
-                tsi.Tag = entry.ID;
-                tsi.ToolTipText = entry.Description;
+                if (!string.IsNullOrEmpty(entry.GUIParentDirectory) &&
+                    !itemCollection.ContainsKey(entry.GUIParentDirectory))
+                {
+                    tsmi = (ToolStripMenuItem)itemCollection.Add(entry.GUIParentDirectory);
+                    tsmi.BackColor = ContextMenu.BackColor;
+                    tsmi.ForeColor = ContextMenu.ForeColor;
+                    tsmi.Name = entry.GUIParentDirectory;
+                    tsmi.DropDownItemClicked += OnContextMenuItemClicked;
+                }
+            }
+
+            foreach (T entry in Database.Instance.GetAllEntries<T>())
+            {
+                if (string.IsNullOrEmpty(entry.GUIParentDirectory))
+                    tsmi = (ToolStripMenuItem)itemCollection.Add(entry.GUIDisplayName);
+                else
+                    tsmi = (ToolStripMenuItem)((ToolStripMenuItem)itemCollection[entry.GUIParentDirectory]).DropDownItems.Add(entry.GUIDisplayName);
+
+                tsmi.BackColor = ContextMenu.BackColor;
+                tsmi.ForeColor = ContextMenu.ForeColor;
+                tsmi.Name = entry.ID;
+                tsmi.Tag = entry.ID;
+                tsmi.ToolTipText = entry.GUIDescription;
             }
         }
 
         private void AddEnumToContextMenu<T>(ToolStripItemCollection itemCollection) where T : struct
         {
             foreach (T e in (T[])Enum.GetValues(typeof(T)))
-                itemCollection.Add(e.ToString()).Tag = e;
+                itemCollection.Add(Toolbox.SplitCamelCase(e)).Tag = e;
         }
 
-        private void AddIntegerToContextMenu(ToolStripItemCollection itemCollection, int min, int max, int increment = 1, string format = "%i", bool addRandomOption = false)
+        private void AddIntegerToContextMenu(ToolStripItemCollection itemCollection, int min, int max, int increment = 1, string format = "%i", int? randomValue = null)
         {
-            if (addRandomOption)
-                itemCollection.Add("(Random)").Tag = 0;
+            if (randomValue.HasValue)
+                itemCollection.Add("(Random)").Tag = randomValue.Value;
 
             for (int i = min; i <= max; i += increment)
                 itemCollection.Add(format.Replace("%i", i.ToString())).Tag = i;
