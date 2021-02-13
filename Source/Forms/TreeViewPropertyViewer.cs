@@ -51,39 +51,44 @@ namespace BriefingRoom4DCSWorld.Forms
             ContextMenu = new ContextMenuStrip { BackColor = contextMenuBackColor, Font = Tree.Font, ForeColor = Tree.ForeColor, ShowImageMargin = false, ShowItemToolTips = true };
             ContextMenu.ItemClicked += OnContextMenuItemClicked;
 
-            SetupTreeView();
+            PopulateTreeView();
             RefreshAll();
             Tree.Sort();
         }
 
-        private void SetupTreeView()
+        private void PopulateTreeView()
         {
             Tree.Nodes.Clear();
 
-            foreach (PropertyInfo pi in ObjectType.GetProperties())
-            {
-                CategoryAttribute ca = pi.GetCustomAttribute<CategoryAttribute>();
-                if (ca == null) continue;
+            if (ObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>() != null)
+                foreach (string extraTreeNode in ObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>().ExtraNodes)
+                {
+                    TreeNode node = Tree.Nodes.Add(extraTreeNode, GetPropertyDisplayName(extraTreeNode));
+                    node.ToolTipText = GetPropertyToolTip(extraTreeNode);
+                    AddTreeViewNodes(node.Nodes, extraTreeNode);
+                }
 
-                if (!Tree.Nodes.ContainsKey(ca.Category)) // Add the category if it's not there already
-                    Tree.Nodes.Add(ca.Category, ca.Category);
-
-                // We set the display name now so the tree's alphabetical sorting is correct
-                Tree.Nodes[ca.Category].Nodes.Add(pi.Name, GetPropertyDisplayName(pi));
-
-                DescriptionAttribute desc = pi.GetCustomAttribute<DescriptionAttribute>();
-                if (desc != null)
-                    Tree.Nodes[ca.Category].Nodes[pi.Name].ToolTipText = desc.Description;
-            }
+            AddTreeViewNodes(Tree.Nodes, null);
 
             Tree.Sort();
             Tree.NodeMouseClick += OnNodeMouseClick;
         }
 
-        //private void AddTreeNode(string parentNode)
-        //{
+        private void AddTreeViewNodes(TreeNodeCollection nodes, string parentNodeName)
+        {
+            foreach (PropertyInfo pi in ObjectType.GetProperties())
+            {
+                ParentPropertyAttribute ppa = pi.GetCustomAttribute<ParentPropertyAttribute>();
+                string parent = (ppa != null) ? ppa.PropertyName : null;
 
-        //}
+                if (parent != parentNodeName) continue;
+
+                TreeNode node = nodes.Add(pi.Name, GetPropertyDisplayName(pi.Name));
+                node.ToolTipText = GetPropertyToolTip(pi.Name);
+                node.Tag = pi.Name;
+                AddTreeViewNodes(node.Nodes, pi.Name);
+            }
+        }
 
         public void RefreshAll()
         {
@@ -104,10 +109,6 @@ namespace BriefingRoom4DCSWorld.Forms
                         foreach (object o in ((Array)pi.GetValue(SelectedObject)))
                             tn.Nodes.Add(o.ToString());
                     }
-                    //{
-                    //    foreach (object o in ((Array)pi.GetValue(SelectedObject)))
-                    //        valueString += $"{o}, ";
-                    //}
 
                     continue;
                 }
@@ -124,32 +125,27 @@ namespace BriefingRoom4DCSWorld.Forms
                     }
                 }
 
-                tn.Text = $"{GetPropertyDisplayName(pi)}: {valueString}";
+                tn.Text = $"{GetPropertyDisplayName(pi.Name)}: {valueString}";
             }
-
-            //Type type = typeof(T);
-
-            //foreach (PropertyInfo pi in type.GetProperties())
-            //{
-            //    CategoryAttribute ca = pi.GetCustomAttribute<CategoryAttribute>();
-            //    if (ca == null) continue;
-
-            //    if (!Tree.Nodes.ContainsKey(ca.Category)) // Add the category if it's not there already
-            //        Tree.Nodes.Add(ca.Category, ca.Category);
-
-            //    Tree.Nodes[ca.Category].Nodes[pi.Name].Text = $"{GetPropertyDisplayName(pi)}: {pi.GetValue(SelectedObject)}";
-            //}
         }
 
-        private string GetPropertyDisplayName(PropertyInfo pi)
+        private string GetPropertyDisplayName(string internalName)
         {
-            DisplayNameAttribute dna = pi.GetCustomAttribute<DisplayNameAttribute>();
-            return (dna != null) ? dna.DisplayName : pi.Name;
+            string displayName = Database.Instance.Strings.GetString(ObjectType.Name, internalName);
+            if (!string.IsNullOrEmpty(displayName)) return displayName;
+
+            return internalName;
+        }
+
+        private string GetPropertyToolTip(string internalName)
+        {
+            return Database.Instance.Strings.GetString(ObjectType.Name, $"{internalName}.ToolTip");
         }
 
         private void OnNodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node == null) return;
+            if (e.Button != MouseButtons.Right) return;
 
             Tree.SelectedNode = e.Node;
             //if (e.Node.Nodes.Count > 0)
@@ -160,9 +156,9 @@ namespace BriefingRoom4DCSWorld.Forms
             //        e.Node.Expand();
             //}
             //else
-            if (e.Node.Level == 0) return;
+            if (e.Node.Tag == null) return;
 
-                ShowContextMenu(e.Node.Name, e.Location);
+            ShowContextMenu(e.Node.Name, e.Location);
             //if (e.Button == MouseButtons.Right)
             //    ShowContextMenu(e.Node.GetPath(), e.Location);
         }
