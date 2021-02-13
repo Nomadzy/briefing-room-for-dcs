@@ -22,13 +22,10 @@ If not, see https://www.gnu.org/licenses/
 
 using BriefingRoom4DCSWorld.Attributes;
 using BriefingRoom4DCSWorld.DB;
-using BriefingRoom4DCSWorld.Template;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace BriefingRoom4DCSWorld.Forms
@@ -78,7 +75,7 @@ namespace BriefingRoom4DCSWorld.Forms
         {
             foreach (PropertyInfo pi in ObjectType.GetProperties())
             {
-                ParentPropertyAttribute ppa = pi.GetCustomAttribute<ParentPropertyAttribute>();
+                TreeViewParentNodeAttribute ppa = pi.GetCustomAttribute<TreeViewParentNodeAttribute>();
                 string parent = (ppa != null) ? ppa.PropertyName : null;
 
                 if (parent != parentNodeName) continue;
@@ -99,7 +96,8 @@ namespace BriefingRoom4DCSWorld.Forms
                 PropertyInfo pi = ObjectType.GetProperty(tn.Name);
                 if (pi == null) continue; // No property has the node's name, continue
 
-                string valueString = pi.GetValue(SelectedObject).ToString();
+                object value = pi.GetValue(SelectedObject);
+                string valueString = value.ToString();
 
                 if (pi.PropertyType.IsArray)
                 {
@@ -112,8 +110,10 @@ namespace BriefingRoom4DCSWorld.Forms
 
                     continue;
                 }
-                
-                if (pi.GetCustomAttribute<DatabaseSourceAttribute>() != null)
+
+                if (pi.PropertyType.IsEnum)
+                    valueString = GetEnumDisplayName(pi.PropertyType, value);
+                else if (pi.GetCustomAttribute<DatabaseSourceAttribute>() != null)
                 {
                     DatabaseSourceAttribute dsa = pi.GetCustomAttribute<DatabaseSourceAttribute>();
                     if (dsa.AllowRandom && string.IsNullOrEmpty(valueString))
@@ -129,11 +129,22 @@ namespace BriefingRoom4DCSWorld.Forms
             }
         }
 
+        private string GetEnumDisplayName(Type enumType, object value)
+        {
+            string displayName = Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}");
+            if (!string.IsNullOrEmpty(displayName)) return displayName;
+            return value.ToString();
+        }
+
+        private string GetEnumToolTip(Type enumType, object value)
+        {
+            return Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}.ToolTip");
+        }
+
         private string GetPropertyDisplayName(string internalName)
         {
             string displayName = Database.Instance.Strings.GetString(ObjectType.Name, internalName);
             if (!string.IsNullOrEmpty(displayName)) return displayName;
-
             return internalName;
         }
 
@@ -254,7 +265,11 @@ namespace BriefingRoom4DCSWorld.Forms
         private void AddEnumToContextMenu(Type enumType, ToolStripItemCollection itemCollection)
         {
             foreach (object e in Enum.GetValues(enumType))
-                itemCollection.Add(e.ToString()).Tag = e;
+            {
+                ToolStripItem item = itemCollection.Add(GetEnumDisplayName(enumType, e));
+                item.Tag = e;
+                item.ToolTipText = GetEnumToolTip(enumType, e);
+            }
         }
 
         private void AddIntegersToContextMenu(ToolStripItemCollection itemCollection, IntegerSourceAttribute isa)

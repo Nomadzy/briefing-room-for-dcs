@@ -153,14 +153,14 @@ namespace BriefingRoom4DCSWorld.Forms
             return result;
         }
 
-        public static void SortToolStripItemCollection(ToolStripItemCollection coll)
+        public static void SortToolStripItemCollection(ToolStripItemCollection itemCollection)
         {
-            System.Collections.ArrayList oAList = new System.Collections.ArrayList(coll);
+            System.Collections.ArrayList oAList = new System.Collections.ArrayList(itemCollection);
             oAList.Sort(new ToolStripItemComparer());
-            coll.Clear();
+            itemCollection.Clear();
 
             foreach (ToolStripItem oItem in oAList)
-                coll.Add(oItem);
+                itemCollection.Add(oItem);
         }
 
         public class ToolStripItemComparer : System.Collections.IComparer

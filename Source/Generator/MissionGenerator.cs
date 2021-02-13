@@ -82,7 +82,7 @@ namespace BriefingRoom4DCSWorld.Generator
             GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.ContextCoalitionBlue);
             GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.ContextCoalitionRed);
             GeneratorTools.CheckDBForMissingEntry<DBEntryObjective>(template.ObjectiveType);
-            GeneratorTools.CheckDBForMissingEntry<DBEntryTheater>(template.TheaterID);
+            GeneratorTools.CheckDBForMissingEntry<DBEntryTheater>(template.Theater);
 
             // Create the mission and copy some values (theater database entry ID, etc.) from the template
             DCSMission mission = new DCSMission();
@@ -97,7 +97,7 @@ namespace BriefingRoom4DCSWorld.Generator
                 objectiveDB = Toolbox.RandomFrom<DBEntryObjective>(Database.Instance.GetAllEntries<DBEntryObjective>().Where(x => x.ID != "Random").ToArray());
             else 
                 objectiveDB = Database.Instance.GetEntry<DBEntryObjective>(template.ObjectiveType);
-            DBEntryTheater theaterDB = Database.Instance.GetEntry<DBEntryTheater>(template.TheaterID);
+            DBEntryTheater theaterDB = Database.Instance.GetEntry<DBEntryTheater>(template.Theater);
 
             // Create the unit maker, which will be used to generate unit groups and their properties
             UnitMaker unitMaker = new UnitMaker(coalitionsDB, theaterDB);
@@ -271,7 +271,7 @@ namespace BriefingRoom4DCSWorld.Generator
             mission.CivilianTraffic = template.OptionsCivilianTraffic;
             mission.CoalitionPlayer = template.ContextCoalitionPlayer;
             mission.RadioAssists = template.OptionsPreferences.Contains(MissionTemplatePreferences.DCSRadioAssists);
-            mission.Theater = template.TheaterID;
+            mission.Theater = template.Theater;
             mission.PlayerStartLocation = template.PlayerStartLocation;
             mission.EndMode = template.OptionsEndMode;
             mission.RealismOptions = template.OptionsRealism;

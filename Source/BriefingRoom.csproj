@@ -71,7 +71,7 @@
     <Compile Include="AirDefenseLevel.cs" />
     <Compile Include="Attributes\IntegerSourceAttribute.cs" />
     <Compile Include="Attributes\DatabaseSourceAttribute.cs" />
-    <Compile Include="Attributes\ParentPropertyAttribute.cs" />
+    <Compile Include="Attributes\TreeViewParentNodeAttribute.cs" />
     <Compile Include="Attributes\TreeViewExtraNodesAttribute.cs" />
     <Compile Include="CivilianTraffic.cs" />
     <Compile Include="Campaign\CampaignDifficultyVariation.cs" />
@@ -144,7 +144,6 @@
     </Compile>
     <Compile Include="Tacan.cs" />
     <Compile Include="Template\MissionTemplatePreferences.cs" />
-    <Compile Include="Template\MissionTemplateDate.cs" />
     <Compile Include="RealismOption.cs" />
     <Compile Include="Template\TemplateTools.cs" />
     <Compile Include="Side.cs" />
