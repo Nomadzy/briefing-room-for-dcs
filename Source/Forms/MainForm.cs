@@ -41,7 +41,7 @@ namespace BriefingRoom4DCSWorld.Forms
         private readonly MissionTemplate Template;
         private DCSMission Mission = null;
 
-        private readonly TreeViewManager TreeViewMaker;
+        private readonly TreeViewPropertyViewer<MissionTemplate> TreeViewMaker;
         
         public MainForm()
         {
@@ -49,7 +49,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
             Generator = new MissionGenerator();
             Template = new MissionTemplate();
-            TreeViewMaker = new TreeViewManager(Template, TemplateTreeView);
+            TreeViewMaker = new TreeViewPropertyViewer<MissionTemplate>(Template, TemplateTreeView);
         }
 
         private void MainForm_Load(object sender, EventArgs e)

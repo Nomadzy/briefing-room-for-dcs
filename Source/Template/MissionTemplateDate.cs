@@ -20,7 +20,7 @@ If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using BriefingRoom4DCSWorld.TypeConverters;
+//using BriefingRoom4DCSWorld.TypeConverters;
 using System;
 using System.ComponentModel;
 
@@ -43,7 +43,7 @@ namespace BriefingRoom4DCSWorld.Template
 
         [DisplayName("(Enable custom date)"), Description("If enabled, the custom date will be used. If not, a random mission date will be generated.")]
         [RefreshProperties(RefreshProperties.All)]
-        [TypeConverter(typeof(BooleanYesNoTypeConverter))]
+        //[TypeConverter(typeof(BooleanYesNoTypeConverter))]
         public bool Enabled { get; set; }
 
         /// <summary>

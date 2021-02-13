@@ -20,12 +20,10 @@ If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using BriefingRoom4DCSWorld.Attributes;
 using BriefingRoom4DCSWorld.DB;
-using BriefingRoom4DCSWorld.TypeConverters;
 using System;
 using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 
@@ -60,7 +58,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Briefing"), DisplayName("Mission date")]
         [Description("The exact date at which the mission should take place. If enabled, the \"Season\" setting from the \"Environment\" category will be ignored. If not enabled, a random year will be selected according to the selected coalitions.")]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
         public MissionTemplateDate BriefingDate { get; set; }
 
         /// <summary>
@@ -68,7 +65,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Briefing"), DisplayName("Mission description")]
         [Description("Description of the mission to display in the briefing. If left empty, a random description will be generated.")]
-        [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public string BriefingDescription { get { return BriefingDescription_; } set { BriefingDescription_ = value.Trim(); } }
         private string BriefingDescription_;
 
@@ -85,7 +81,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Briefing"), DisplayName("Unit system")]
         [Description("Unit system to use in the mission briefing.")]
-        [TypeConverter(typeof(EnumTypeConverter<UnitSystem>))]
         public UnitSystem BriefingUnitSystem { get; set; }
 
         /// <summary>
@@ -93,7 +88,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Context"), DisplayName("Coalition, blue")]
         [Description("Who belongs to the blue coalition?")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
+        [DatabaseSource(typeof(DBEntryCoalition))]
         public string ContextCoalitionBlue { get { return ContextCoalitionBlue_; } set { ContextCoalitionBlue_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
         private string ContextCoalitionBlue_;
 
@@ -102,7 +97,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Context"), DisplayName("Player coalition")]
         [Description("Which coalition does the player(s) belong to?")]
-        [TypeConverter(typeof(EnumTypeConverter<Coalition>))]
         public Coalition ContextCoalitionPlayer { get; set; }
 
         /// <summary>
@@ -110,7 +104,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Context"), DisplayName("Coalition, red")]
         [Description("Who belongs to the red coalition?")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
+        [DatabaseSource(typeof(DBEntryCoalition))]
         public string ContextCoalitionRed { get { return ContextCoalitionRed_; } set { ContextCoalitionRed_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
         private string ContextCoalitionRed_;
 
@@ -119,7 +113,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Context"), DisplayName("Mission date")]
         [Description("During which decade will this mission take place? This value is ignored if Briefing/Mission date is set.")]
-        [TypeConverter(typeof(EnumTypeConverter<Decade>))]
         public Decade ContextDecade { get; set; }
 
         /// <summary>
@@ -127,7 +120,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Environment"), DisplayName("Season")]
         [Description("Season during which the mission will take place.")]
-        [TypeConverter(typeof(EnumTypeConverter<Season>))]
         public Season EnvironmentSeason { get; set; }
 
         /// <summary>
@@ -135,7 +127,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Environment"), DisplayName("Time of day")]
         [Description("Starting time of the mission.")]
-        [TypeConverter(typeof(EnumTypeConverter<TimeOfDay>))]
         public TimeOfDay EnvironmentTimeOfDay { get; set; }
 
         /// <summary>
@@ -143,7 +134,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Environment"), DisplayName("Weather")]
         [Description("What the weather be like during the mission.")]
-        [TypeConverter(typeof(EnumTypeConverter<Weather>))]
         public Weather EnvironmentWeather { get; set; }
 
         /// <summary>
@@ -151,7 +141,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Environment"), DisplayName("Wind")]
         [Description("How windy will the weather be during the mission. \"Auto\" means \"choose according to the weather\".")]
-        [TypeConverter(typeof(EnumTypeConverter<Wind>))]
         public Wind EnvironmentWind { get; set; }
 
         /// <summary>
@@ -159,6 +148,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Objectives"), DisplayName("Objective count")]
         [Description("How many objectives/targets will be present in the mission.")]
+        [IntegerSource(1, TemplateTools.MAX_OBJECTIVES, 1)]
         public int ObjectiveCount { get { return ObjectiveCount_; } set { ObjectiveCount_ = Toolbox.Clamp(value, 1, TemplateTools.MAX_OBJECTIVES); } }
         private int ObjectiveCount_;
 
@@ -167,6 +157,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Objectives"), DisplayName("Objective distance (NM)")]
         [Description("How far from the player's starting location will the objectives be in Nautical Miles, in nautical miles. \"Zero\" means \"random\".")]
+        [IntegerSource(TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 10, "%i nm", true, 0)]
         public int ObjectiveDistanceNM { get { return ObjectiveDistanceNM_; } set { ObjectiveDistanceNM_ = TemplateTools.CheckObjectiveDistance(value); } }
         private int ObjectiveDistanceNM_;
 
@@ -175,7 +166,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Objectives"), DisplayName("Objective type")]
         [Description("The type of task player must accomplish in this mission.")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryObjective>))]
+        [DatabaseSource(typeof(DBEntryObjective), true)]
         public string ObjectiveType { get { return ObjectiveType_; } set { ObjectiveType_ = TemplateTools.CheckValue<DBEntryObjective>(value); } }
         private string ObjectiveType_;
 
@@ -184,7 +175,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("Air defense")]
         [Description("Intensity and quality of enemy air defense.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN OppositionAirDefense { get; set; }
 
         /// <summary>
@@ -194,7 +184,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("Air force")]
         [Description("Relative power of the enemy air force. Enemy air force will always be proportional to the number and air-to-air efficiency of aircraft in the player mission package, so more player/AI friendly aircraft means more enemy aircraft, regardless of this setting.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN OppositionAirForce { get; set; }
 
         /// <summary>
@@ -202,7 +191,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("CAP on station")]
         [Description("Chance that enemy fighter planes will already be patrolling on mission start rather than popping up during the mission on objective completion.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN OppositionOnStationChance { get; set; }
 
         /// <summary>
@@ -210,7 +198,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("Skill level, aircraft")]
         [Description("Skill level of enemy planes and helicopters.")]
-        [TypeConverter(typeof(EnumTypeConverter<BRSkillLevel>))]
         public BRSkillLevel OppositionSkillLevelAir { get; set; }
 
         /// <summary>
@@ -218,7 +205,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("Skill level, ground units")]
         [Description("Skill level of enemy ground units and air defense.")]
-        [TypeConverter(typeof(EnumTypeConverter<BRSkillLevel>))]
         public BRSkillLevel OppositionSkillLevelGround { get; set; }
 
         /// <summary>
@@ -230,7 +216,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Opposition"), DisplayName("Enemy units location")]
         [Description("Can enemy units be spawned in any country (recommended) or only in countries aligned with a given coalition? Be aware that when choosing an option other than \"Any\", depending on the theater and the \"Theater region coalitions\" setting, objectives may end up VERY far from the player(s) starting location, no matter the value of \"Objective distance\". Keep in mind that \"Theaters regions coalitions\" has a influence on this setting.")]
-        [TypeConverter(typeof(EnumTypeConverter<SpawnPointPreferredCoalition>))]
         public SpawnPointPreferredCoalition OppositionUnitsLocation { get; set; }
 
         /// <summary>
@@ -238,7 +223,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("Civilian road traffic")]
         [Description("Amount of civilian traffic on the roads. Can affect performance if set too high.")]
-        [TypeConverter(typeof(EnumTypeConverter<CivilianTraffic>))]
         public CivilianTraffic OptionsCivilianTraffic { get; set; }
 
         /// <summary>
@@ -246,7 +230,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("End Mode")]
         [Description("When (and if) should the mission automatically end after all objectives are complete?")]
-        [TypeConverter(typeof(EnumTypeConverter<MissionEndMode>))]
         public MissionEndMode OptionsEndMode { get; set; }
 
         /// <summary>
@@ -254,8 +237,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("Preferences")]
         [Description("Preferences and options to apply to this mission.")]
-        [TypeConverter(typeof(EnumArrayTypeConverter<MissionTemplatePreferences>))]
-        [Editor(typeof(CheckedListBoxUIEditorEnum<MissionTemplatePreferences>), typeof(UITypeEditor))]
         public MissionTemplatePreferences[] OptionsPreferences { get; set; }
 
         /// <summary>
@@ -263,8 +244,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("Realism")]
         [Description("Realism options to apply to this mission.")]
-        [TypeConverter(typeof(EnumArrayTypeConverter<RealismOption>))]
-        [Editor(typeof(CheckedListBoxUIEditorEnum<RealismOption>), typeof(UITypeEditor))]
         public RealismOption[] OptionsRealism { get; set; }
 
         /// <summary>
@@ -272,8 +251,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("Script extensions")]
         [Description("Script extensions to include in this mission to provide additional features.")]
-        [TypeConverter(typeof(StringArrayTypeConverter))]
-        [Editor(typeof(CheckedListBoxUIEditorDBEntry<DBEntryExtension>), typeof(UITypeEditor))]
+        [DatabaseSource(typeof(DBEntryExtension))]
         public string[] OptionsScriptExtensions { get; set; }
 
         /// <summary>
@@ -281,8 +259,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Options"), DisplayName("Unit mods")]
         [Description("Which unit mods should be enabled in this mission? Make sure units mods are installed and active in your version of DCS World or the units won't be spawned.")]
-        [TypeConverter(typeof(StringArrayTypeConverter))]
-        [Editor(typeof(CheckedListBoxUIEditorUnitMods), typeof(UITypeEditor))]
+        [DatabaseSource(typeof(DBEntryUnitMod))]
         public string[] OptionsUnitMods { get; set; }
 
         /// <summary>
@@ -292,8 +269,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player, multiplayer only"), DisplayName("MP flight groups")]
         [Description("Multiplayer flight groups. If any flight group is specified here, the mission then becomes a multiplayer mission and all values in the \"Player, single player only\" are ignored.")]
-        [TypeConverter(typeof(MissionTemplateFlightGroupConverter))]
-        [Editor(typeof(DescriptionArrayEditor), typeof(UITypeEditor))]
         public MissionTemplateMPFlightGroup[] PlayerMPFlightGroups { get; set; } = new MissionTemplateMPFlightGroup[0];
 
         /// <summary>
@@ -304,7 +279,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player, single player only"), DisplayName("Aircraft")]
         [Description("Type of aircraft the player will fly. As with all values in the \"Player, single player only\" category, this value is ignored if any flight group is specified in \"MP flight groups\", the multiplayer flight groups are then used instead.")]
-        [TypeConverter(typeof(DBEntryPlayerAircraftTypeConverter))]
         public string PlayerSPAircraft { get { return PlayerSPAircraft_; } set { PlayerSPAircraft_ = TemplateTools.CheckValuePlayerAircraft(value); } }
         private string PlayerSPAircraft_;
 
@@ -324,7 +298,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player, single player only"), DisplayName("Carrier (BETA)")]
         [Description("Type of aircraft carrier the player will be spawned on. If none, player will take off from an airbase. Make sure the player aircraft is suitable for the carrier type.")]
-        [TypeConverter(typeof(DBEntryCarrierConverter))]
+        //[DatabaseSource(typeof(DBEntryCarrier))]
         public string PlayerSPCarrier { get; set; }
 
         /// <summary>
@@ -332,7 +306,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player"), DisplayName("AI skill level")]
         [Description("Skill level of AI wingmen and escort aircraft.")]
-        [TypeConverter(typeof(EnumTypeConverter<BRSkillLevel>))]
         public BRSkillLevel PlayerAISkillLevel { get; set; }
 
         /// <summary>
@@ -360,7 +333,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player"), DisplayName("Air defense")]
         [Description("Intensity and quality of friendly air defense.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN PlayerFriendlyAirDefense { get; set; }
 
         /// <summary>
@@ -368,7 +340,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Player"), DisplayName("Start location")]
         [Description("Where should the player(s) take off from?")]
-        [TypeConverter(typeof(EnumTypeConverter<PlayerStartLocation>))]
         public PlayerStartLocation PlayerStartLocation { get; set; }
 
         /// <summary>
@@ -376,7 +347,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Theater"), DisplayName("Theater ID")]
         [Description("DCS World theater in which the mission will take place.")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryTheater>))]
+        [DatabaseSource(typeof(DBEntryTheater))]
         public string TheaterID { get { return TheaterID_; } set { TheaterID_ = TemplateTools.CheckValue<DBEntryTheater>(value); } }
         private string TheaterID_;
 
@@ -385,7 +356,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Theater"), DisplayName("Theater regions coalitions")]
         [Description("To which coalitions should the countries on the map (and their airbases) belong to?")]
-        [TypeConverter(typeof(EnumTypeConverter<CountryCoalition>))]
         public CountryCoalition TheaterRegionsCoalitions { get; set; }
 
         /// <summary>
@@ -394,7 +364,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [Category("Theater"), DisplayName("Theater starting airbase")]
         [Description("Name of the airbase the player must take off from. If left empty, or if the airbase doesn't exist in this theater, a random airbase will be selected. Be aware that if the selected airbase doesn't have enough parking spots for the player mission package, some units may not spawn properly.")]
-        [TypeConverter(typeof(DBEntryTheaterAirbaseArrayTypeConverter))]
+        //[TypeConverter(typeof(DBEntryTheaterAirbaseArrayTypeConverter))]
         public string TheaterStartingAirbase { get { return TheaterStartingAirbase_; } set { TheaterStartingAirbase_ = TemplateTools.CheckValueTheaterStartingAirbase(value); } }
         private string TheaterStartingAirbase_;
 

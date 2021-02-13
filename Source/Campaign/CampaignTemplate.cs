@@ -22,7 +22,7 @@ If not, see https://www.gnu.org/licenses/
 
 using BriefingRoom4DCSWorld.DB;
 using BriefingRoom4DCSWorld.Template;
-using BriefingRoom4DCSWorld.TypeConverters;
+//using BriefingRoom4DCSWorld.TypeConverters;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -68,7 +68,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Context"), DisplayName("Coalition, blue")]
         [Description("Who belongs to the blue coalition?")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
+        //[TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
         public string ContextCoalitionsBlue { get { return ContextCoalitionBlue_; } set { ContextCoalitionBlue_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
         private string ContextCoalitionBlue_;
 
@@ -77,7 +77,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Context"), DisplayName("Coalition, red")]
         [Description("Who belongs to the red coalition?")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
+        //[TypeConverter(typeof(DBEntryTypeConverter<DBEntryCoalition>))]
         public string ContextCoalitionsRed { get { return ContextCoalitionRed_; } set { ContextCoalitionRed_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
         private string ContextCoalitionRed_;
 
@@ -86,7 +86,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Context"), DisplayName("Decade")]
         [Description("Decade during which the campaign will take place.")]
-        [TypeConverter(typeof(EnumTypeConverter<Decade>))]
+        //[TypeConverter(typeof(EnumTypeConverter<Decade>))]
         public Decade ContextDecade { get; set; }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Context"), DisplayName("Theater")]
         [Description("DCS World theater in which the mission will take place.")]
-        [TypeConverter(typeof(DBEntryTypeConverter<DBEntryTheater>))]
+        //[TypeConverter(typeof(DBEntryTypeConverter<DBEntryTheater>))]
         public string ContextTheaterID { get { return ContextTheaterID_; } set { ContextTheaterID_ = TemplateTools.CheckValue<DBEntryTheater>(value); } }
         private string ContextTheaterID_;
 
@@ -103,7 +103,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Context"), DisplayName("Theater, regions alignment")]
         [Description("To which coalitions should the countries on the map (and their airbases) belong to?")]
-        [TypeConverter(typeof(EnumTypeConverter<CountryCoalition>))]
+        //[TypeConverter(typeof(EnumTypeConverter<CountryCoalition>))]
         public CountryCoalition ContextTheaterRegionsCoalitions { get; set; }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Environment"), DisplayName("Bad weather chance")]
         [Description("Chance for a mission of this campaign to take place in bad weather.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN EnvironmentBadWeatherChance { get; set; }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Environment"), DisplayName("Night mission chance")]
         [Description("Chance for a mission of this campaign to take place during the night.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN EnvironmentNightMissionChance { get; set; }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Missions"), DisplayName("Objective count")]
         [Description("How many objectives/targets will be present in the mission.")]
-        [TypeConverter(typeof(EnumTypeConverter<Amount>))]
+        //[TypeConverter(typeof(EnumTypeConverter<Amount>))]
         public Amount MissionsObjectiveCount { get; set; }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Missions"), DisplayName("Objective distance")]
         [Description("How far from the player's starting location will the objectives be.")]
-        [TypeConverter(typeof(EnumTypeConverter<Amount>))]
+        //[TypeConverter(typeof(EnumTypeConverter<Amount>))]
         public Amount MissionsObjectiveDistance { get; set; }
 
         /// <summary>
@@ -151,8 +151,8 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Missions"), DisplayName("Mission tasking")]
         [Description("The type of tasking player may recieve in this campaign's missions.")]
-        [TypeConverter(typeof(StringArrayTypeConverter))]
-        [Editor(typeof(CheckedListBoxUIEditorDBEntry<DBEntryObjective>), typeof(UITypeEditor))]
+        //[TypeConverter(typeof(StringArrayTypeConverter))]
+        //[Editor(typeof(CheckedListBoxUIEditorDBEntry<DBEntryObjective>), typeof(UITypeEditor))]
         public string[] MissionsTypes { get { return MissionsTypes_; } set { MissionsTypes_ = TemplateTools.CheckValues<DBEntryObjective>(value, Database.Instance.Common.DefaultObjective); } }
         private string[] MissionsTypes_;
 
@@ -161,7 +161,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Options"), DisplayName("Civilian road traffic")]
         [Description("Amount of civilian traffic on the roads. Can affect performance if set too high.")]
-        [TypeConverter(typeof(EnumTypeConverter<CivilianTraffic>))]
+        //[TypeConverter(typeof(EnumTypeConverter<CivilianTraffic>))]
         public CivilianTraffic OptionsCivilianTraffic { get; set; }
 
         /// <summary>
@@ -169,8 +169,8 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Options"), DisplayName("Preferences")]
         [Description("Preferences and options to apply to this campaign.")]
-        [TypeConverter(typeof(EnumArrayTypeConverter<MissionTemplatePreferences>))]
-        [Editor(typeof(CheckedListBoxUIEditorEnum<MissionTemplatePreferences>), typeof(UITypeEditor))]
+        //[TypeConverter(typeof(EnumArrayTypeConverter<MissionTemplatePreferences>))]
+        //[Editor(typeof(CheckedListBoxUIEditorEnum<MissionTemplatePreferences>), typeof(UITypeEditor))]
         public MissionTemplatePreferences[] OptionsPreferences { get; set; }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Options"), DisplayName("Realism")]
         [Description("Realism options to apply to this mission.")]
-        [TypeConverter(typeof(EnumArrayTypeConverter<RealismOption>))]
-        [Editor(typeof(CheckedListBoxUIEditorEnum<RealismOption>), typeof(UITypeEditor))]
+        //[TypeConverter(typeof(EnumArrayTypeConverter<RealismOption>))]
+        //[Editor(typeof(CheckedListBoxUIEditorEnum<RealismOption>), typeof(UITypeEditor))]
         public RealismOption[] OptionsRealism { get; set; }
 
         /// <summary>
@@ -187,8 +187,8 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Options"), DisplayName("Unit mods")]
         [Description("Which unit mods should be enabled in this mission? Make sure units mods are installed and active in your version of DCS World or the units won't be spawned.")]
-        [TypeConverter(typeof(StringArrayTypeConverter))]
-        [Editor(typeof(CheckedListBoxUIEditorUnitMods), typeof(UITypeEditor))]
+        //[TypeConverter(typeof(StringArrayTypeConverter))]
+        //[Editor(typeof(CheckedListBoxUIEditorUnitMods), typeof(UITypeEditor))]
         public string[] OptionsUnitMods { get; set; }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Player"), DisplayName("Aircraft")]
         [Description("Type of aircraft the player will fly.")]
-        [TypeConverter(typeof(DBEntryPlayerAircraftTypeConverter))]
+        //[TypeConverter(typeof(DBEntryPlayerAircraftTypeConverter))]
         public string PlayerAircraft { get { return PlayerAircraft_; } set { PlayerAircraft_ = TemplateTools.CheckValuePlayerAircraft(value); } }
         private string PlayerAircraft_;
 
@@ -205,7 +205,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Player"), DisplayName("Coalition")]
         [Description("Which coalition does the player belong to?")]
-        [TypeConverter(typeof(EnumTypeConverter<Coalition>))]
+        //[TypeConverter(typeof(EnumTypeConverter<Coalition>))]
         public Coalition PlayerCoalition { get; set; }
 
 
@@ -215,7 +215,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Theater"), DisplayName("Theater starting airbase")]
         [Description("Name of the airbase the player must take off from. If left empty, or if the airbase doesn't exist in this theater, a random airbase will be selected. Be aware that if the selected airbase doesn't have enough parking spots for the player mission package, some units may not spawn properly.")]
-        [TypeConverter(typeof(DBEntryTheaterAirbaseArrayTypeConverter))]
+        //[TypeConverter(typeof(DBEntryTheaterAirbaseArrayTypeConverter))]
         public string PlayerStartingAirbase { get { return PlayerStartingAirbase_; } set { PlayerStartingAirbase_ = TemplateTools.CheckValueTheaterStartingAirbase(value); } }
         private string PlayerStartingAirbase_;
 
@@ -225,7 +225,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Player"), DisplayName("Carrier (BETA)")]
         [Description("Type of aircraft carrier the player will be spawned on. If none, player will take off from an airbase. Make sure the player aircraft is suitable for the carrier type.")]
-        [TypeConverter(typeof(DBEntryCarrierConverter))]
+        //[TypeConverter(typeof(DBEntryCarrierConverter))]
         public string PlayerStartingCarrier { get; set; }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Player"), DisplayName("Start location")]
         [Description("Where should the player take off from?")]
-        [TypeConverter(typeof(EnumTypeConverter<PlayerStartLocation>))]
+        //[TypeConverter(typeof(EnumTypeConverter<PlayerStartLocation>))]
         public PlayerStartLocation PlayerStartLocation { get; set; }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Situation"), DisplayName("Enemy air defense")]
         [Description("Initial quality of enemy air defense.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN SituationEnemyAirDefense { get; set; }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Situation"), DisplayName("Enemy air force")]
         [Description("Initial quality of enemy air force.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN SituationEnemyAirForce { get; set; }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Situation"), DisplayName("Friendly air defense")]
         [Description("Initial quality of friendly air defense.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN SituationFriendlyAirDefense { get; set; }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Situation"), DisplayName("Friendly air force")]
         [Description("Initial quality of friendly air force.")]
-        [TypeConverter(typeof(EnumTypeConverter<AmountN>))]
+        //[TypeConverter(typeof(EnumTypeConverter<AmountN>))]
         public AmountN SituationFriendlyAirForce { get; set; }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace BriefingRoom4DCSWorld.Campaign
         /// </summary>
         [Category("Situation"), DisplayName("Variation")]
         [Description("How the situation evolves during the campaign. Campaign can get harder and harder with enemy power increasing as player completes missions (like in a game) or easier and easier as enemy power decreased (as it tend to happens to the losing side in a real conflict), etc.")]
-        [TypeConverter(typeof(EnumTypeConverter<CampaignDifficultyVariation>))]
+        //[TypeConverter(typeof(EnumTypeConverter<CampaignDifficultyVariation>))]
         public CampaignDifficultyVariation SituationVariation { get; set; }
 
         /// <summary>

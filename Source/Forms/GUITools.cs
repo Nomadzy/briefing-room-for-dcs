@@ -120,21 +120,57 @@ namespace BriefingRoom4DCSWorld.Forms
             return fileName;
         }
 
-        /// <summary>
-        /// Returns the full path of a treeview node in the form of a string array of node keys.
-        /// </summary>
-        /// <param name="node">A treeview node</param>
-        /// <returns>An array of string</returns>
-        public static string[] GetPath(this TreeNode node)
-        {
-            List<string> path = new List<string>();
-            do
-            {
-                path.Insert(0, node.Name ?? "");
-                node = node.Parent;
-            } while (node != null);
+        ///// <summary>
+        ///// Returns the full path of a treeview node in the form of a string array of node keys.
+        ///// </summary>
+        ///// <param name="node">A treeview node</param>
+        ///// <returns>An array of string</returns>
+        //public static string[] GetPath(this TreeNode node)
+        //{
+        //    List<string> path = new List<string>();
+        //    do
+        //    {
+        //        path.Insert(0, node.Name ?? "");
+        //        node = node.Parent;
+        //    } while (node != null);
 
-            return path.ToArray();
+        //    return path.ToArray();
+        //}
+
+        public static List<TreeNode> GetAllNodes(this TreeView treeView)
+        {
+            List<TreeNode> result = new List<TreeNode>();
+            foreach (TreeNode child in treeView.Nodes)
+                result.AddRange(child.GetAllNodes());
+            return result;
+        }
+
+        public static List<TreeNode> GetAllNodes(this TreeNode treeNode)
+        {
+            List<TreeNode> result = new List<TreeNode> { treeNode };
+            foreach (TreeNode child in treeNode.Nodes)
+                result.AddRange(child.GetAllNodes());
+            return result;
+        }
+
+        public static void SortToolStripItemCollection(ToolStripItemCollection coll)
+        {
+            System.Collections.ArrayList oAList = new System.Collections.ArrayList(coll);
+            oAList.Sort(new ToolStripItemComparer());
+            coll.Clear();
+
+            foreach (ToolStripItem oItem in oAList)
+                coll.Add(oItem);
+        }
+
+        public class ToolStripItemComparer : System.Collections.IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                ToolStripItem oItem1 = (ToolStripItem)x;
+                ToolStripItem oItem2 = (ToolStripItem)y;
+                return string.Compare(oItem1.Text, oItem2.Text, true);
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ If not, see https://www.gnu.org/licenses/
 */
 
 using BriefingRoom4DCSWorld.DB;
-using BriefingRoom4DCSWorld.TypeConverters;
+//using BriefingRoom4DCSWorld.TypeConverters;
 using System;
 using System.ComponentModel;
 
@@ -36,7 +36,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// Type of aircraft in this flight group.
         /// </summary>
         [DisplayName("Aircraft"), Description("Type of aircraft in this flight group.")]
-        [TypeConverter(typeof(DBEntryPlayerAircraftTypeConverter))]
+        //[TypeConverter(typeof(DBEntryPlayerAircraftTypeConverter))]
         public string AircraftType { get { return AircraftType_; } set { AircraftType_ = TemplateTools.CheckValuePlayerAircraft(value); } }
         private string AircraftType_;
 
@@ -44,7 +44,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// Should this aircraft group be spawned on the carrier? A compatible carrier must be selected in the mission template settings.
         /// </summary>
         [DisplayName("Carrier"), Description("Should this aircraft group be spawned on the carrier? A compatible carrier must be selected in the mission template settings.")]
-        [TypeConverter(typeof(DBEntryCarrierConverter))]
+        //[TypeConverter(typeof(DBEntryCarrierConverter))]
         public string Carrier { get; set; }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// Task assigned to this flight group. Can be the mission objectives or CAP/SEAD escort.
         /// </summary>
         [DisplayName("Task"), Description("Task assigned to this flight group. Can be the mission objectives or CAP/SEAD escort.")]
-        [TypeConverter(typeof(EnumTypeConverter<MissionTemplateMPFlightGroupTask>))]
+        //[TypeConverter(typeof(EnumTypeConverter<MissionTemplateMPFlightGroupTask>))]
         public MissionTemplateMPFlightGroupTask Task { get; set; }
 
         /// <summary>
