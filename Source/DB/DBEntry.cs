@@ -45,9 +45,9 @@ namespace BriefingRoom4DCSWorld.DB
         public string GUIDescription { get; private set; }
 
         /// <summary>
-        /// Parent directory in the UI context menu.
+        /// Category the DB entry belongs to in the context menu.
         /// </summary>
-        public string GUIParentDirectory { get; private set; }
+        public string GUICategory { get; private set; }
 
         /// <summary>
         /// Constructor.
@@ -68,7 +68,7 @@ namespace BriefingRoom4DCSWorld.DB
             {
                 GUIDisplayName = ini.GetValue<string>("GUI", "DisplayName");
                 GUIDescription = ini.GetValue<string>("GUI", "Description");
-                GUIParentDirectory = ini.GetValue<string>("GUI", "ParentDirectory");
+                GUICategory = ini.GetValue<string>("GUI", "Category");
      
                 if (string.IsNullOrEmpty(GUIDisplayName)) GUIDisplayName = ID;
                 if (string.IsNullOrEmpty(GUIDescription)) GUIDescription = GUIDisplayName;
