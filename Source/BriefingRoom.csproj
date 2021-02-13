@@ -72,10 +72,12 @@
     <Compile Include="Attributes\IntegerSourceAttribute.cs" />
     <Compile Include="Attributes\DatabaseSourceAttribute.cs" />
     <Compile Include="Attributes\ParentPropertyAttribute.cs" />
+    <Compile Include="Attributes\TreeViewExtraNodesAttribute.cs" />
     <Compile Include="CivilianTraffic.cs" />
     <Compile Include="Campaign\CampaignDifficultyVariation.cs" />
     <Compile Include="Campaign\CampaignGenerator.cs" />
     <Compile Include="Campaign\CampaignTemplate.cs" />
+    <Compile Include="DB\DatabaseStrings.cs" />
     <Compile Include="DB\DBEntryDefaultUnitList.cs" />
     <Compile Include="DB\DBEntryUnitMod.cs" />
     <Compile Include="DB\DBEntryMissionFeatureUnitGroupLocation.cs" />
@@ -86,6 +88,7 @@
       <DependentUpon>CampaignCreatorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TreeViewPropertyViewer.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="Media\ImageMaker.cs" />
     <Compile Include="Media\ImageMakerLayer.cs" />
     <Compile Include="Media\ImageMakerTextOverlay.cs" />

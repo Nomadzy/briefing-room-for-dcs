@@ -64,6 +64,8 @@ namespace BriefingRoom4DCSWorld.DB
         /// </summary>
         private readonly Dictionary<Type, Dictionary<string, DBEntry>> DBEntries;
 
+        public DatabaseStrings Strings { get; }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -72,6 +74,7 @@ namespace BriefingRoom4DCSWorld.DB
             Common = new DatabaseCommon();
             Countries = new string[0];
             DBEntries = new Dictionary<Type, Dictionary<string, DBEntry>>();
+            Strings = new DatabaseStrings();
         }
 
         /// <summary>
