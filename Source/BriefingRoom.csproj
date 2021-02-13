@@ -69,11 +69,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AirDefenseLevel.cs" />
+    <Compile Include="Attributes\IntegerSourceAttribute.cs" />
+    <Compile Include="Attributes\DatabaseSourceAttribute.cs" />
+    <Compile Include="Attributes\ParentPropertyAttribute.cs" />
     <Compile Include="CivilianTraffic.cs" />
     <Compile Include="Campaign\CampaignDifficultyVariation.cs" />
     <Compile Include="Campaign\CampaignGenerator.cs" />
     <Compile Include="Campaign\CampaignTemplate.cs" />
     <Compile Include="DB\DBEntryDefaultUnitList.cs" />
+    <Compile Include="DB\DBEntryUnitMod.cs" />
     <Compile Include="DB\DBEntryMissionFeatureUnitGroupLocation.cs" />
     <Compile Include="DB\DBEntryTheaterAirbaseParkingSpot.cs" />
     <Compile Include="BRSkillLevel.cs" />
@@ -81,7 +85,7 @@
     <Compile Include="Forms\CampaignCreatorForm.Designer.cs">
       <DependentUpon>CampaignCreatorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TreeViewManager.cs" />
+    <Compile Include="Forms\TreeViewPropertyViewer.cs" />
     <Compile Include="Media\ImageMaker.cs" />
     <Compile Include="Media\ImageMakerLayer.cs" />
     <Compile Include="Media\ImageMakerTextOverlay.cs" />
@@ -159,12 +163,6 @@
     <Compile Include="DB\DBEntryUnit.cs" />
     <Compile Include="Coordinates.cs" />
     <Compile Include="Debug\DebugLogMessageErrorLevel.cs" />
-    <Compile Include="TypeConverters\CheckedListBoxUIEditorUnitMods.cs" />
-    <Compile Include="TypeConverters\CheckedListBoxUIEditorEnum.cs" />
-    <Compile Include="TypeConverters\CheckedListBoxUIEditorDBEntry.cs" />
-    <Compile Include="TypeConverters\DBEntryCarrierConverter.cs" />
-    <Compile Include="TypeConverters\EnumArrayTypeConverter.cs" />
-    <Compile Include="TypeConverters\StringArrayTypeConverter.cs" />
     <Compile Include="UnitSystem.cs" />
     <Compile Include="UnitTaskPayload.cs" />
     <Compile Include="Generator\UnitMaker.cs" />
@@ -184,14 +182,6 @@
     <Compile Include="Mission\DCSMissionUnitGroup.cs" />
     <Compile Include="Template\MissionTemplate.cs" />
     <Compile Include="Template\MissionTemplateMPFlightGroup.cs" />
-    <Compile Include="TypeConverters\CheckedListBoxUIEditor.cs" />
-    <Compile Include="TypeConverters\DBEntryTypeConverter.cs" />
-    <Compile Include="TypeConverters\DBEntryTheaterAirbaseArrayTypeConverter.cs" />
-    <Compile Include="TypeConverters\DBEntryPlayerAircraftTypeConverter.cs" />
-    <Compile Include="TypeConverters\EnumTypeConverter.cs" />
-    <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
-    <Compile Include="TypeConverters\DescriptionArrayEditor.cs" />
-    <Compile Include="TypeConverters\MissionTemplateFlightGroupConverter.cs" />
     <Compile Include="Mission\DCSMissionObjective.cs" />
     <Compile Include="Miz\MizMakerLuaMapResource.cs" />
     <Compile Include="Miz\MizMakerLuaMission.cs" />
