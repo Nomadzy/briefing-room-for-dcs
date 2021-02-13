@@ -26,7 +26,6 @@ namespace BriefingRoom4DCSWorld
     public enum Weather
     {
         Random = -1, // Random must be < 0 for casts from Int32
-
         Clear,
         LightClouds,
         SomeClouds,
