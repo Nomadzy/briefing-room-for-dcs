@@ -47,8 +47,8 @@ namespace BriefingRoom4DCSWorld.DB
             LoadDatabaseEntries<DBEntryObjective>(dbEntries, "Objectives"); // Must be loaded after DBEntryMissionFeature as it depends on it
             LoadDatabaseEntries<DBEntryTheater>(dbEntries, "Theaters");
             LoadDatabaseEntries<DBEntryUnit>(dbEntries, "Units");
+            LoadDatabaseEntries<DBEntryUnitMod>(dbEntries, "UnitMods");
             CreateCountriesArrayFromUnitOperators(); // Must be called after DBEntryUnit is loaded as it depends on it
-            CreateUnitModsArrayFromUnits(); // Must be called after DBEntryUnit is loaded as it depends on it
             LoadDatabaseEntries<DBEntryDefaultUnitList>(dbEntries, "DefaultUnitLists"); // Must be loaded after DBEntryUnit as it depends on it
             LoadDatabaseEntries<DBEntryCoalition>(dbEntries, "Coalitions"); // Must be loaded after DBEntryUnit and DBEntryDefaultUnitList as it depends on them
         }
@@ -65,17 +65,6 @@ namespace BriefingRoom4DCSWorld.DB
 
             Database.Instance.Countries =
                 (from string c in countries select c.ToLowerInvariant()).Distinct(StringComparer.InvariantCultureIgnoreCase).ToArray();
-        }
-
-        private void CreateUnitModsArrayFromUnits()
-        {
-            List<string> unitMods = new List<string>();
-
-            foreach (DBEntryUnit unit in Database.Instance.GetAllEntries<DBEntryUnit>())
-                if (!string.IsNullOrEmpty(unit.RequiredMod.Trim()))
-                    unitMods.Add(unit.RequiredMod);
-
-            Database.Instance.UnitsMods = unitMods.Distinct(StringComparer.InvariantCultureIgnoreCase).ToArray();
         }
 
         /// <summary>

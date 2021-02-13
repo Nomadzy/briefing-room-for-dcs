@@ -65,11 +65,6 @@ namespace BriefingRoom4DCSWorld.DB
         private readonly Dictionary<Type, Dictionary<string, DBEntry>> DBEntries;
 
         /// <summary>
-        /// List of unit mods ID.
-        /// </summary>
-        public string[] UnitsMods { get; set; }
-
-        /// <summary>
         /// Constructor.
         /// </summary>
         public Database()
@@ -77,7 +72,6 @@ namespace BriefingRoom4DCSWorld.DB
             Common = new DatabaseCommon();
             Countries = new string[0];
             DBEntries = new Dictionary<Type, Dictionary<string, DBEntry>>();
-            UnitsMods = new string[0];
         }
 
         /// <summary>
@@ -117,14 +111,20 @@ namespace BriefingRoom4DCSWorld.DB
             return (from d in DBEntries[typeof(T)].Values select (T)d).ToArray();
         }
 
+        public DBEntry[] GetAllEntries(Type type)
+        {
+            return DBEntries[type].Values.ToArray();
+        }
+
         /// <summary>
         /// Returns all IDs of entries of a certain type.
         /// </summary>
         /// <typeparam name="T">Database entry type</typeparam>
         /// <returns>IDs, in an array of strings</returns>
-        public string[] GetAllEntriesIDs<T>() where T : DBEntry
+        public string[] GetAllEntriesIDs<T>() where T : DBEntry { return GetAllEntriesIDs(typeof(T)); }
+        public string[] GetAllEntriesIDs(Type type)
         {
-            return DBEntries[typeof(T)].Keys.ToArray();
+            return DBEntries[type].Keys.ToArray();
         }
 
         /// <summary>
@@ -176,6 +176,14 @@ namespace BriefingRoom4DCSWorld.DB
             id = id ?? "";
             if (!DBEntries[typeof(T)].ContainsKey(id)) return null;
             return (T)DBEntries[typeof(T)][id];
+        }
+
+        public DBEntry GetEntry(Type entryType, string id)
+        {
+            id = id ?? "";
+            if (!DBEntries.ContainsKey(entryType)) return null;
+            if (!DBEntries[entryType].ContainsKey(id)) return null;
+            return DBEntries[entryType][id];
         }
 
         /// <summary>
