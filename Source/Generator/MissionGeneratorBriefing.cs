@@ -50,15 +50,9 @@ namespace BriefingRoom4DCSWorld.Generator
         {
             DebugLog.Instance.WriteLine("Generating mission name...", 1);
 
-            string fixedName = GeneratorTools.SanitizeString(template.BriefingName);
-            if (!string.IsNullOrEmpty(fixedName)) // A custom mission name has been provided, use it
-                mission.MissionName = fixedName;
-            else // No custom name? Generate one
-            {
-                mission.MissionName = Database.Instance.Common.MissionNameTemplate;
-                for (int i = 0; i < DatabaseCommon.MISSION_NAMES_PART_COUNT; i++)
-                    mission.MissionName = mission.MissionName.Replace($"$P{i + 1}$", Toolbox.RandomFrom(Database.Instance.Common.MissionNameParts[i]));
-            }
+            mission.MissionName = Database.Instance.Common.MissionNameTemplate;
+            for (int i = 0; i < DatabaseCommon.MISSION_NAMES_PART_COUNT; i++)
+                mission.MissionName = mission.MissionName.Replace($"$P{i + 1}$", Toolbox.RandomFrom(Database.Instance.Common.MissionNameParts[i]));
 
             DebugLog.Instance.WriteLine($"Mission name set to \"{mission.MissionName}\"", 2);
         }
@@ -77,16 +71,12 @@ namespace BriefingRoom4DCSWorld.Generator
             // Get mission features
             DBEntryMissionFeature[] features = Database.Instance.GetEntries<DBEntryMissionFeature>(objectiveDB.MissionFeatures);
 
-            string description = GeneratorTools.SanitizeString(template.BriefingDescription);
-            if (string.IsNullOrEmpty(description)) // No custom mission description has been provided, generate one
-            {
-                description = objectiveDB.BriefingDescriptionByUnitFamily[(int)mission.Objectives[0].TargetFamily];
-                if (string.IsNullOrEmpty(description)) // No custom briefing for this target family, use the default
-                    description = objectiveDB.BriefingDescription;
+            string description = objectiveDB.BriefingDescriptionByUnitFamily[(int)mission.Objectives[0].TargetFamily];
+            if (string.IsNullOrEmpty(description)) // No custom briefing for this target family, use the default
+                description = objectiveDB.BriefingDescription;
 
-                description =
-                    GeneratorTools.MakeBriefingStringReplacements(GeneratorTools.ParseRandomString(description), mission, coalitionsDB);
-            }
+            description =
+                GeneratorTools.MakeBriefingStringReplacements(GeneratorTools.ParseRandomString(description), mission, coalitionsDB);
             description = GeneratorTools.SanitizeString(description);
 
             // Generate tasks
@@ -106,12 +96,12 @@ namespace BriefingRoom4DCSWorld.Generator
             List<string> remarks = new List<string>();
             remarks.AddRange( // ...from objective
                 from string remark in objectiveDB.BriefingRemarks
-                select GeneratorTools.MakeBriefingStringReplacements(GeneratorTools.ParseRandomString(remark), mission, coalitionsDB)); 
+                select GeneratorTools.MakeBriefingStringReplacements(GeneratorTools.ParseRandomString(remark), mission, coalitionsDB));
             foreach (DBEntryMissionFeature feature in features)
                 remarks.AddRange( // ...from features
                     from string remark in feature.BriefingRemarks
                     select GeneratorTools.MakeBriefingStringReplacements(GeneratorTools.ParseRandomString(remark), mission, coalitionsDB));
-            
+
             /*
             // Opposition Remarks
             string airDefenseNumbers = template.OppositionAirDefense == AmountN.Random? "Unknown":template.OppositionAirDefense.ToString();

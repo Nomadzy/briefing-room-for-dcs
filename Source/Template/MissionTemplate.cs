@@ -23,7 +23,6 @@ If not, see https://www.gnu.org/licenses/
 using BriefingRoom4DCSWorld.Attributes;
 using BriefingRoom4DCSWorld.DB;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -53,102 +52,62 @@ namespace BriefingRoom4DCSWorld.Template
         }
 
         /// <summary>
-        /// The exact date at which the mission should take place.
-        /// If enabled, the <see cref="EnvironmentSeason"/> setting will be ignored.
-        /// If not enabled, a random year will be selected according to the selected coalitions.
-        /// </summary>
-        [DisplayName("Mission date")]
-        [Description("The exact date at which the mission should take place. If enabled, the \"Season\" setting from the \"Environment\" category will be ignored. If not enabled, a random year will be selected according to the selected coalitions.")]
-        public MissionTemplateDate BriefingDate { get; set; }
-
-        /// <summary>
-        /// Description of the mission to display in the briefing. If left empty, a random description will be generated.
-        /// </summary>
-        [DisplayName("Mission description")]
-        [Description("Description of the mission to display in the briefing. If left empty, a random description will be generated.")]
-        public string BriefingDescription { get { return BriefingDescription_; } set { BriefingDescription_ = value.Trim(); } }
-        private string BriefingDescription_;
-
-        /// <summary>
-        /// Name/title of the mission. If left empty, a random name will be generated.
-        /// </summary>
-        [DisplayName("Mission name")]
-        [Description("Name/title of the mission. If left empty, a random name will be generated.")]
-        public string BriefingName { get { return BriefingName_; } set { BriefingName_ = value.Trim(); } }
-        private string BriefingName_;
-
-        /// <summary>
         /// Unit system to use in the mission briefing.
         /// </summary>
-        [DisplayName("Unit system")]
-        [Description("Unit system to use in the mission briefing.")]
+        [TreeViewParentNode("Options")]
         public UnitSystem BriefingUnitSystem { get; set; }
 
         /// <summary>
         /// Who belongs to the blue coalition?
         /// </summary>
-        [DisplayName("Coalition, blue")]
-        [Description("Who belongs to the blue coalition?")]
         [DatabaseSource(typeof(DBEntryCoalition))]
-        public string ContextCoalitionBlue { get { return ContextCoalitionBlue_; } set { ContextCoalitionBlue_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
-        private string ContextCoalitionBlue_;
+        public string ContextCoalitionBlue { get; set; }
 
         /// <summary>
         /// Which coalition does the player(s) belong to?
         /// </summary>
-        [DisplayName("Player coalition")]
-        [Description("Which coalition does the player(s) belong to?")]
+        [TreeViewParentNode("ContextCoalitionBlue")]
         public Coalition ContextCoalitionPlayer { get; set; }
 
         /// <summary>
         /// Who belongs to the red coalition?
         /// </summary>
-        [DisplayName("Coalition, red")]
-        [Description("Who belongs to the red coalition?")]
         [DatabaseSource(typeof(DBEntryCoalition))]
-        public string ContextCoalitionRed { get { return ContextCoalitionRed_; } set { ContextCoalitionRed_ = TemplateTools.CheckValue<DBEntryCoalition>(value); } }
-        private string ContextCoalitionRed_;
+        public string ContextCoalitionRed { get; set; }
 
         /// <summary>
         /// During which decade will this mission take place? This value is ignored if Briefing/Mission date is set.
         /// </summary>
-        [DisplayName("Mission date")]
-        [Description("During which decade will this mission take place? This value is ignored if Briefing/Mission date is set.")]
-        public Decade ContextDecade { get; set; }
+        public Decade Decade { get; set; }
 
         /// <summary>
         /// Season during which the mission will take place.
         /// </summary>
-        [DisplayName("Season"), ParentProperty("Environment")]
-        [Description("Season during which the mission will take place.")]
+        [TreeViewParentNode("Environment")]
         public Season EnvironmentSeason { get; set; }
 
         /// <summary>
-        /// Starting time of the mission.
+        /// Time of the day at which the mission will start.
         /// </summary>
-        [DisplayName("Time of day"), ParentProperty("Environment")]
-        [Description("Starting time of the mission.")]
+        [TreeViewParentNode("Environment")]
         public TimeOfDay EnvironmentTimeOfDay { get; set; }
 
         /// <summary>
         /// What the weather be like during the mission.
         /// </summary>
-        [DisplayName("Weather"), ParentProperty("Environment")]
-        [Description("What the weather be like during the mission.")]
+        [TreeViewParentNode("Environment")]
         public Weather EnvironmentWeather { get; set; }
 
         /// <summary>
         /// How windy will the weather be during the mission. "Auto" means "choose according to <see cref="EnvironmentWeather"/>".
         /// </summary>
-        [DisplayName("Wind"), ParentProperty("EnvironmentWeather")]
-        [Description("How windy will the weather be during the mission. \"Auto\" means \"choose according to the weather\".")]
+        [TreeViewParentNode("EnvironmentWeather")]
         public Wind EnvironmentWind { get; set; }
 
         /// <summary>
         /// How many objectives/targets will be present in the mission.
         /// </summary>
-        [DisplayName("Objective count")]
-        [Description("How many objectives/targets will be present in the mission.")]
+        [TreeViewParentNode("ObjectiveType")]
         [IntegerSource(1, TemplateTools.MAX_OBJECTIVES, 1)]
         public int ObjectiveCount { get { return ObjectiveCount_; } set { ObjectiveCount_ = Toolbox.Clamp(value, 1, TemplateTools.MAX_OBJECTIVES); } }
         private int ObjectiveCount_;
@@ -156,8 +115,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// <summary>
         /// How far from the player's starting location will the objectives be, in nautical miles. "Zero" means "random".
         /// </summary>
-        [DisplayName("Objective distance (NM)")]
-        [Description("How far from the player's starting location will the objectives be in Nautical Miles, in nautical miles. \"Zero\" means \"random\".")]
+        [TreeViewParentNode("ObjectiveType")]
         [IntegerSource(TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 10, "%i nm", true, 0)]
         public int ObjectiveDistanceNM { get { return ObjectiveDistanceNM_; } set { ObjectiveDistanceNM_ = TemplateTools.CheckObjectiveDistance(value); } }
         private int ObjectiveDistanceNM_;
@@ -165,8 +123,6 @@ namespace BriefingRoom4DCSWorld.Template
         /// <summary>
         /// The type of task player must accomplish in this mission.
         /// </summary>
-        [DisplayName("Objective type")]
-        [Description("The type of task player must accomplish in this mission.")]
         [DatabaseSource(typeof(DBEntryObjective), true)]
         public string ObjectiveType { get { return ObjectiveType_; } set { ObjectiveType_ = TemplateTools.CheckValue<DBEntryObjective>(value); } }
         private string ObjectiveType_;
@@ -174,8 +130,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// <summary>
         /// Intensity and quality of enemy air defense.
         /// </summary>
-        [DisplayName("Air defense")]
-        [Description("Intensity and quality of enemy air defense.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public AmountN OppositionAirDefense { get; set; }
 
         /// <summary>
@@ -183,29 +138,25 @@ namespace BriefingRoom4DCSWorld.Template
         /// Enemy air force will always be proportional to the number and air-to-air efficiency of aircraft in the player mission package,
         /// so more player/AI friendly aircraft means more enemy aircraft, regardless of this setting.
         /// </summary>
-        [DisplayName("Air force")]
-        [Description("Relative power of the enemy air force. Enemy air force will always be proportional to the number and air-to-air efficiency of aircraft in the player mission package, so more player/AI friendly aircraft means more enemy aircraft, regardless of this setting.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public AmountN OppositionAirForce { get; set; }
 
         /// <summary>
         /// Chance that enemy fighter planes will already be patrolling on mission start rather than popping up during the mission on objective completion.
         /// </summary>
-        [DisplayName("CAP on station")]
-        [Description("Chance that enemy fighter planes will already be patrolling on mission start rather than popping up during the mission on objective completion.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public AmountN OppositionOnStationChance { get; set; }
 
         /// <summary>
         /// Skill level of enemy planes and helicopters.
         /// </summary>
-        [DisplayName("Skill level, aircraft")]
-        [Description("Skill level of enemy planes and helicopters.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public BRSkillLevel OppositionSkillLevelAir { get; set; }
 
         /// <summary>
         /// Skill level of enemy ground units and air defense.
         /// </summary>
-        [DisplayName("Skill level, ground units")]
-        [Description("Skill level of enemy ground units and air defense.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public BRSkillLevel OppositionSkillLevelGround { get; set; }
 
         /// <summary>
@@ -215,51 +166,44 @@ namespace BriefingRoom4DCSWorld.Template
         /// location, no matter the value of <see cref="ObjectiveDistance"/>.
         /// Keep in mind that <see cref="TheaterRegionsCoalitions"/> has a influence on this setting.
         /// </summary>
-        [DisplayName("Enemy units location")]
-        [Description("Can enemy units be spawned in any country (recommended) or only in countries aligned with a given coalition? Be aware that when choosing an option other than \"Any\", depending on the theater and the \"Theater region coalitions\" setting, objectives may end up VERY far from the player(s) starting location, no matter the value of \"Objective distance\". Keep in mind that \"Theaters regions coalitions\" has a influence on this setting.")]
+        [TreeViewParentNode("ContextCoalitionRed")]
         public SpawnPointPreferredCoalition OppositionUnitsLocation { get; set; }
 
         /// <summary>
         /// Amount of civilian traffic on the roads. Can affect performance if set too high.
         /// </summary>
-        [DisplayName("Civilian road traffic")]
-        [Description("Amount of civilian traffic on the roads. Can affect performance if set too high.")]
+        [TreeViewParentNode("Options")]
         public CivilianTraffic OptionsCivilianTraffic { get; set; }
 
         /// <summary>
         /// When (and if) should the mission automatically end after all objectives are complete?
         /// </summary>
-        [DisplayName("End Mode")]
-        [Description("When (and if) should the mission automatically end after all objectives are complete?")]
+        [TreeViewParentNode("Options")]
         public MissionEndMode OptionsEndMode { get; set; }
 
         /// <summary>
         /// Preferences and options to apply to this mission.
         /// </summary>
-        [DisplayName("Preferences")]
-        [Description("Preferences and options to apply to this mission.")]
+        [TreeViewParentNode("Options")]
         public MissionTemplatePreferences[] OptionsPreferences { get; set; }
 
         /// <summary>
         /// Realism options to apply to this mission.
         /// </summary>
-        [DisplayName("Realism")]
-        [Description("Realism options to apply to this mission.")]
+        [TreeViewParentNode("Options")]
         public RealismOption[] OptionsRealism { get; set; }
 
         /// <summary>
         /// Script extensions to include in this mission to provide additional features.
         /// </summary>
-        [DisplayName("Script extensions")]
-        [Description("Script extensions to include in this mission to provide additional features.")]
+        [TreeViewParentNode("Options")]
         [DatabaseSource(typeof(DBEntryExtension))]
         public string[] OptionsScriptExtensions { get; set; }
 
         /// <summary>
         /// Which unit mods should be enabled in this mission? Make sure units mods are installed and active in your version of DCS World or the units won't be spawned.
         /// </summary>
-        [DisplayName("Unit mods")]
-        [Description("Which unit mods should be enabled in this mission? Make sure units mods are installed and active in your version of DCS World or the units won't be spawned.")]
+        [TreeViewParentNode("Options")]
         [DatabaseSource(typeof(DBEntryUnitMod))]
         public string[] OptionsUnitMods { get; set; }
 
@@ -268,8 +212,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// If any flight group is specified here, the mission then becomes a multiplayer mission and all values
         /// in the "Player, single player only" are ignored.
         /// </summary>
-        [DisplayName("MP flight groups")]
-        [Description("Multiplayer flight groups. If any flight group is specified here, the mission then becomes a multiplayer mission and all values in the \"Player, single player only\" are ignored.")]
+        [TreeViewParentNode("ContextCoalitionBlue")]
         public MissionTemplateMPFlightGroup[] PlayerMPFlightGroups { get; set; } = new MissionTemplateMPFlightGroup[0];
 
         /// <summary>
@@ -278,8 +221,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// flight group is specified in <see cref="PlayerMPFlightGroups" />, the multiplayer flight groups
         /// are then used instead.
         /// </summary>
-        [DisplayName("Aircraft")]
-        [Description("Type of aircraft the player will fly. As with all values in the \"Player, single player only\" category, this value is ignored if any flight group is specified in \"MP flight groups\", the multiplayer flight groups are then used instead.")]
+        [TreeViewParentNode("ContextCoalitionBlue")]
         public string PlayerSPAircraft { get { return PlayerSPAircraft_; } set { PlayerSPAircraft_ = TemplateTools.CheckValuePlayerAircraft(value); } }
         private string PlayerSPAircraft_;
 
@@ -289,25 +231,20 @@ namespace BriefingRoom4DCSWorld.Template
         /// flight group is specified in <see cref="PlayerMPFlightGroups" />, the multiplayer flight groups
         /// are then used instead.
         /// </summary>
-        [DisplayName("Wingmen")]
-        [Description("Number of AI wingmen in the player's flight group. As with all values in the \"Player, single player only\" category, this value is ignored if any flight group is specified in \"MP flight groups\", the multiplayer flight groups are then used instead.")]
+        [TreeViewParentNode("Players")]
         public int PlayerSPWingmen { get { return PlayerSPWingmen_; } set { PlayerSPWingmen_ = Toolbox.Clamp(value, 0, Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE - 1); } }
         private int PlayerSPWingmen_;
 
         /// <summary>
         /// Type of aircraft carrier the player will be spawned on. If none, player will take off from an airbase. Make sure the player aircraft is suitable for the carrier type.
         /// </summary>
-        [DisplayName("Carrier (BETA)")]
-        [Description("Type of aircraft carrier the player will be spawned on. If none, player will take off from an airbase. Make sure the player aircraft is suitable for the carrier type.")]
-        //[DatabaseSource(typeof(DBEntryCarrier))]
+        [TreeViewParentNode("Players")]
         public string PlayerSPCarrier { get; set; }
 
         /// <summary>
         /// Skill level of AI wingmen and escort aircraft.
         /// </summary>
-        [DisplayName("AI skill level")]
-        [Description("Skill level of AI wingmen and escort aircraft.")]
-        [ParentProperty("ContextCoalitionBlue")]
+        [TreeViewParentNode("ContextCoalitionBlue")]
         public BRSkillLevel PlayerAISkillLevel { get; set; }
 
         /// <summary>
@@ -315,8 +252,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// In single-player missions, escorts will be spawned on the ramp if the player starts from the ramp (cold or hot), or in the air above the airbase if the player starts on the runway.
         /// In multiplayer missions, escorts will be spawned as soon as one player takes off.
         /// </summary>
-        [DisplayName("AI CAP escort")]
-        [Description("Number of AI aircraft tasked with escorting the player against enemy fighters. In single-player missions, escorts will be spawned on the ramp if the player starts from the ramp (cold or hot), or in the air above the airbase if the player starts on the runway. In multiplayer missions, escorts will be spawned as soon as one player takes off.")]
+        [TreeViewParentNode("Players")]
         public int PlayerEscortCAP { get { return PlayerEscortCAP_; } set { PlayerEscortCAP_ = Toolbox.Clamp(value, 0, Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE); } }
         private int PlayerEscortCAP_;
 
@@ -325,48 +261,39 @@ namespace BriefingRoom4DCSWorld.Template
         /// In single-player missions, escorts will be spawned on the ramp if the player starts from the ramp (cold or hot), or in the air above the airbase if the player starts on the runway.
         /// In multiplayer missions, escorts will be spawned as soon as one player takes off.
         /// </summary>
-        [DisplayName("AI SEAD escort")]
-        [Description("Number of AI aircraft tasked with escorting the player against enemy SAMs. In single-player missions, escorts will be spawned on the ramp if the player starts from the ramp (cold or hot), or in the air above the airbase if the player starts on the runway. In multiplayer missions, escorts will be spawned as soon as one player takes off.")]
+        [TreeViewParentNode("Players")]
         public int PlayerEscortSEAD { get { return PlayerEscortSEAD_; } set { PlayerEscortSEAD_ = Toolbox.Clamp(value, 0, Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE); } }
         private int PlayerEscortSEAD_;
 
         /// <summary>
         /// Intensity and quality of friendly air defense.
         /// </summary>
-        [DisplayName("Air defense")]
-        [Description("Intensity and quality of friendly air defense.")]
+        [TreeViewParentNode("ContextCoalitionBlue")]
         public AmountN PlayerFriendlyAirDefense { get; set; }
 
         /// <summary>
         /// Where should the player(s) take off from?
         /// </summary>
-        [DisplayName("Start location")]
-        [Description("Where should the player(s) take off from?")]
+        [TreeViewParentNode("Options")]
         public PlayerStartLocation PlayerStartLocation { get; set; }
 
         /// <summary>
         /// DCS World theater in which the mission will take place.
         /// </summary>
-        [DisplayName("Theater ID")]
-        [Description("DCS World theater in which the mission will take place.")]
         [DatabaseSource(typeof(DBEntryTheater))]
-        public string TheaterID { get { return TheaterID_; } set { TheaterID_ = TemplateTools.CheckValue<DBEntryTheater>(value); } }
-        private string TheaterID_;
+        public string Theater { get; set; }
 
         /// <summary>
         /// To which coalitions should the countries on the map (and their airbases) belong to?
         /// </summary>
-        [DisplayName("Theater regions coalitions")]
-        [Description("To which coalitions should the countries on the map (and their airbases) belong to?")]
+        [TreeViewParentNode("Theater")]
         public CountryCoalition TheaterRegionsCoalitions { get; set; }
 
         /// <summary>
         /// Name of the airbase the player must take off from.
         /// If left empty, or if the airbase doesn't exist in this theater, a random airbase will be selected.
         /// </summary>
-        [DisplayName("Theater starting airbase")]
-        [Description("Name of the airbase the player must take off from. If left empty, or if the airbase doesn't exist in this theater, a random airbase will be selected. Be aware that if the selected airbase doesn't have enough parking spots for the player mission package, some units may not spawn properly.")]
-        //[TypeConverter(typeof(DBEntryTheaterAirbaseArrayTypeConverter))]
+        [TreeViewParentNode("Theater")]
         public string TheaterStartingAirbase { get { return TheaterStartingAirbase_; } set { TheaterStartingAirbase_ = TemplateTools.CheckValueTheaterStartingAirbase(value); } }
         private string TheaterStartingAirbase_;
 
@@ -375,15 +302,15 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         public void Clear()
         {
-            BriefingDate = new MissionTemplateDate();
-            BriefingDescription = "";
-            BriefingName = "";
+            //BriefingDate = new MissionTemplateDate();
+            //BriefingDescription = "";
+            //BriefingName = "";
             BriefingUnitSystem = UnitSystem.Imperial;
 
             ContextCoalitionBlue = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionBlue);
             ContextCoalitionPlayer = Coalition.Blue;
             ContextCoalitionRed = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionRed);
-            ContextDecade = Decade.Decade2000;
+            Decade = Decade.Decade2000;
 
             EnvironmentSeason = Season.Random;
             EnvironmentTimeOfDay = TimeOfDay.RandomDaytime;
@@ -419,7 +346,7 @@ namespace BriefingRoom4DCSWorld.Template
             PlayerSPWingmen = 1;
             PlayerSPCarrier = "";
 
-            TheaterID = TemplateTools.CheckValue<DBEntryTheater>(Database.Instance.Common.DefaultTheater);
+            Theater = TemplateTools.CheckValue<DBEntryTheater>(Database.Instance.Common.DefaultTheater);
             TheaterRegionsCoalitions = CountryCoalition.Default;
             TheaterStartingAirbase = "";
         }
@@ -436,15 +363,12 @@ namespace BriefingRoom4DCSWorld.Template
 
             using (INIFile ini = new INIFile(filePath))
             {
-                BriefingDate.LoadFromFile(ini);
-                BriefingDescription = ini.GetValue("Briefing", "Description", BriefingDescription);
-                BriefingName = ini.GetValue("Briefing", "Name", BriefingName);
                 BriefingUnitSystem = ini.GetValue("Briefing", "UnitSystem", BriefingUnitSystem);
 
                 ContextCoalitionBlue = ini.GetValue("Context", "Coalition.Blue", ContextCoalitionBlue);
                 ContextCoalitionPlayer = ini.GetValue("Context", "Coalition.Player", ContextCoalitionPlayer);
                 ContextCoalitionRed = ini.GetValue("Context", "Coalition.Red", ContextCoalitionRed);
-                ContextDecade = ini.GetValue("Context", "Decade", ContextDecade);
+                Decade = ini.GetValue("Context", "Decade", Decade);
 
                 EnvironmentSeason = ini.GetValue("Environment", "Season", EnvironmentSeason);
                 EnvironmentTimeOfDay = ini.GetValue("Environment", "TimeOfDay", EnvironmentTimeOfDay);
@@ -484,7 +408,7 @@ namespace BriefingRoom4DCSWorld.Template
                 PlayerSPWingmen = ini.GetValue("PlayerSP", "Wingmen", PlayerSPWingmen);
                 PlayerSPCarrier = ini.GetValue("PlayerSP", "Carrier", PlayerSPCarrier);
 
-                TheaterID = ini.GetValue("Theater", "ID", TheaterID);
+                Theater = TemplateTools.CheckValue<DBEntryTheater>(ini.GetValue("Theater", "ID", Theater));
                 TheaterRegionsCoalitions = ini.GetValue("Theater", "RegionsCoalitions", TheaterRegionsCoalitions);
                 TheaterStartingAirbase = ini.GetValue("Theater", "StartingAirbase", TheaterStartingAirbase);
             }
@@ -500,15 +424,12 @@ namespace BriefingRoom4DCSWorld.Template
         {
             using (INIFile ini = new INIFile())
             {
-                BriefingDate.SaveToFile(ini);
-                ini.SetValue("Briefing", "Description", BriefingDescription);
-                ini.SetValue("Briefing", "Name", BriefingName);
                 ini.SetValue("Briefing", "UnitSystem", BriefingUnitSystem);
 
                 ini.SetValue("Context", "Coalition.Blue", ContextCoalitionBlue);
                 ini.SetValue("Context", "Coalition.Player", ContextCoalitionPlayer);
                 ini.SetValue("Context", "Coalition.Red", ContextCoalitionRed);
-                ini.SetValue("Context", "Decade", ContextDecade);
+                ini.SetValue("Context", "Decade", Decade);
 
                 ini.SetValue("Environment", "Season", EnvironmentSeason);
                 ini.SetValue("Environment", "TimeOfDay", EnvironmentTimeOfDay);
@@ -548,7 +469,7 @@ namespace BriefingRoom4DCSWorld.Template
                 for (int i = 0; i < PlayerMPFlightGroups.Length; i++)
                     PlayerMPFlightGroups[i].SaveToFile(ini, "PlayerMP", $"FG{i:000}");
 
-                ini.SetValue("Theater", "ID", TheaterID);
+                ini.SetValue("Theater", "ID", Theater);
                 ini.SetValue("Theater", "RegionsCoalitions", TheaterRegionsCoalitions);
                 ini.SetValue("Theater", "StartingAirbase", TheaterStartingAirbase);
 

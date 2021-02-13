@@ -141,13 +141,6 @@ namespace BriefingRoom4DCSWorld.Campaign
 
             MissionTemplate template = new MissionTemplate();
 
-            template.BriefingDate.Enabled = true;
-            template.BriefingDate.Day = currentDate.Day;
-            template.BriefingDate.Month = currentDate.Month;
-            template.BriefingDate.Year = currentDate.Year;
-            template.BriefingDescription = "";
-            template.BriefingName = $"{campaignName}, phase {index + 1}";
-
             template.ContextCoalitionBlue = campaignTemplate.ContextCoalitionsBlue;
             template.ContextCoalitionPlayer = campaignTemplate.PlayerCoalition;
             template.ContextCoalitionRed = campaignTemplate.ContextCoalitionsRed;
@@ -182,7 +175,7 @@ namespace BriefingRoom4DCSWorld.Campaign
             template.PlayerStartLocation = campaignTemplate.PlayerStartLocation;
             template.PlayerSPCarrier = campaignTemplate.PlayerStartingCarrier;
 
-            template.TheaterID = campaignTemplate.ContextTheaterID;
+            template.Theater = campaignTemplate.ContextTheaterID;
             template.TheaterRegionsCoalitions = campaignTemplate.ContextTheaterRegionsCoalitions;
             template.TheaterStartingAirbase = campaignTemplate.PlayerStartingAirbase;
 
