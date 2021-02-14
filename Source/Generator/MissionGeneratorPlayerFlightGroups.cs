@@ -103,7 +103,7 @@ namespace BriefingRoom4DCSWorld.Generator
                 Enumerable.Repeat(template.PlayerSPAircraft, template.PlayerSPWingmen + 1).ToArray(),
                 Side.Ally, isCarrier? mission.Carriers.First(x => x.Units[0].Name == template.PlayerSPCarrier).Coordinates : mission.InitialPosition,
                 isCarrier? "GroupAircraftPlayerCarrier" : "GroupAircraftPlayer", "UnitAircraft",
-                Toolbox.BRSkillLevelToDCSSkillLevel(template.PlayerAISkillLevel), DCSMissionUnitGroupFlags.FirstUnitIsPlayer,
+                Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionAlliesSkillLevel), DCSMissionUnitGroupFlags.FirstUnitIsPlayer,
                 objectiveDB.Payload,
                 null, isCarrier? -99 : mission.InitialAirbaseID, true);
 
@@ -175,7 +175,7 @@ namespace BriefingRoom4DCSWorld.Generator
                     mission, aircraft,
                     Side.Ally, position,
                     groupLua, "UnitAircraft",
-                    Toolbox.BRSkillLevelToDCSSkillLevel(template.PlayerAISkillLevel), 0,
+                    Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionAlliesSkillLevel), 0,
                     payload, mission.ObjectivesCenter);
 
             if (group == null)

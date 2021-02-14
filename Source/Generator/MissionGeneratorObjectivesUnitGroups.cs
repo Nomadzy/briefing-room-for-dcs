@@ -97,11 +97,11 @@ namespace BriefingRoom4DCSWorld.Generator
                 // Pick the skill level once for each objective so not all target groups have the same skill level when a "random" skill level is chosen.
                 DCSSkillLevel skillLevel;
                 if (side == Side.Ally)
-                    skillLevel = Toolbox.BRSkillLevelToDCSSkillLevel(template.PlayerAISkillLevel);
+                    skillLevel = Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionAlliesSkillLevel);
                 else
                     skillLevel = 
                         Toolbox.IsUnitFamilyAircraft(mission.Objectives[i].TargetFamily.Value) ?
-                        Toolbox.BRSkillLevelToDCSSkillLevel(template.OppositionSkillLevelAir) : Toolbox.BRSkillLevelToDCSSkillLevel(template.OppositionSkillLevelGround);
+                        Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionEnemiesSkillLevelAir) : Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionEnemiesSkillLevelGround);
 
                 DCSMissionUnitGroup group;
                 DBEntryTheaterSpawnPoint? spawnPoint = null;
@@ -121,13 +121,13 @@ namespace BriefingRoom4DCSWorld.Generator
                 if (unitGroup.Flags.HasFlag(DBUnitGroupFlags.EmbeddedAirDefense)) // Add "embedded" close range surface-to-air defense
                 {
                     if (Toolbox.GetUnitCategoryFromUnitFamily(mission.Objectives[i].TargetFamily.Value) == UnitCategory.Vehicle) // Objectives are ground vehicles, insert air defense units in the group itself
-                        units = GeneratorTools.AddEmbeddedAirDefense(units, template.OppositionAirDefense, coalitionsDB[(int)coalition], mission.DateTime.Decade, template.OptionsUnitMods);
+                        units = GeneratorTools.AddEmbeddedAirDefense(units, template.CoalitionEnemiesAirDefense, coalitionsDB[(int)coalition], mission.DateTime.Decade, template.OptionsUnitMods);
                     else // Objectives are not ground vehicles, create another group nearby
                     {
                         // TODO: make sure the group is not spawn in water
                         string[] airDefenseGroupUnits = new string[0];
                         for (int j = 0; j < 2; j++)
-                            airDefenseGroupUnits = GeneratorTools.AddEmbeddedAirDefense(airDefenseGroupUnits, template.OppositionAirDefense, coalitionsDB[(int)coalition], mission.DateTime.Decade, template.OptionsUnitMods);
+                            airDefenseGroupUnits = GeneratorTools.AddEmbeddedAirDefense(airDefenseGroupUnits, template.CoalitionEnemiesAirDefense, coalitionsDB[(int)coalition], mission.DateTime.Decade, template.OptionsUnitMods);
 
                         UnitMaker.AddUnitGroup(
                             mission, airDefenseGroupUnits,

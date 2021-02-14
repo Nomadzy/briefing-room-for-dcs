@@ -100,13 +100,13 @@ namespace BriefingRoom4DCSWorld.Generator
 
             // Select all airbases with enough parking spots, trying to match the preferred coalition for enemy unit location, if any
             if ((template.TheaterRegionsCoalitions == CountryCoalition.AllBlue) || (template.TheaterRegionsCoalitions == CountryCoalition.AllRed) ||
-                (template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Any))
+                (template.CoalitionEnemiesUnitsLocation == SpawnPointPreferredCoalition.Any))
                 airbasesList.AddRange((from DBEntryTheaterAirbase ab in theaterDB.Airbases where ab.ParkingSpots.Length >= Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE select ab).ToArray());
             else
             {
                 Coalition preferredCoalition;
 
-                if (template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Blue)
+                if (template.CoalitionEnemiesUnitsLocation == SpawnPointPreferredCoalition.Blue)
                     preferredCoalition = (template.TheaterRegionsCoalitions == CountryCoalition.Inverted) ? Coalition.Red : Coalition.Blue;
                 else
                     preferredCoalition = (template.TheaterRegionsCoalitions == CountryCoalition.Inverted) ? Coalition.Blue : Coalition.Red;

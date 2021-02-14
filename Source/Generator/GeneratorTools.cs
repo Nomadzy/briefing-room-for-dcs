@@ -136,14 +136,14 @@ namespace BriefingRoom4DCSWorld.Generator
         public static Coalition? GetEnemySpawnPointCoalition(MissionTemplate template)
         {
             // No preference for enemy units location
-            if (template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Any) return null;
+            if (template.CoalitionEnemiesUnitsLocation == SpawnPointPreferredCoalition.Any) return null;
 
             // All countries belong to the same coalition anyway, so preference have no meaning.
             if ((template.TheaterRegionsCoalitions == CountryCoalition.AllBlue) ||
                 (template.TheaterRegionsCoalitions == CountryCoalition.AllRed))
                 return null;
 
-            if (template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Blue)
+            if (template.CoalitionEnemiesUnitsLocation == SpawnPointPreferredCoalition.Blue)
                 return (template.TheaterRegionsCoalitions == CountryCoalition.Inverted) ? Coalition.Red : Coalition.Blue;
 
             // Last possibility is "template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Red"
@@ -158,14 +158,14 @@ namespace BriefingRoom4DCSWorld.Generator
         public static Coalition? GetAllySpawnPointCoalition(MissionTemplate template)
         {
             // No preference for enemy units location
-            if (template.OppositionUnitsLocation != SpawnPointPreferredCoalition.Any) return null;
+            if (template.CoalitionEnemiesUnitsLocation != SpawnPointPreferredCoalition.Any) return null;
 
             // All countries belong to the same coalition anyway, so preference have no meaning.
             if ((template.TheaterRegionsCoalitions != CountryCoalition.AllBlue) &&
                 (template.TheaterRegionsCoalitions != CountryCoalition.AllRed))
                 return null;
 
-            if (template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Blue)
+            if (template.CoalitionEnemiesUnitsLocation == SpawnPointPreferredCoalition.Blue)
                 return (template.TheaterRegionsCoalitions == CountryCoalition.Inverted) ? Coalition.Blue : Coalition.Red;
 
             // Last possibility is "template.OppositionUnitsLocation == SpawnPointPreferredCoalition.Red"

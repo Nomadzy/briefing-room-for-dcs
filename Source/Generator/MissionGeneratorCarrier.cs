@@ -105,7 +105,7 @@ namespace BriefingRoom4DCSWorld.Generator
                 Side.Ally,
                 spawnPoint.Value.Coordinates,
                 "GroupCarrier", "UnitShip",
-                Toolbox.BRSkillLevelToDCSSkillLevel(template.PlayerAISkillLevel));
+                Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionAlliesSkillLevel));
 
             if (group == null)
                 DebugLog.Instance.WriteLine($"Failed to create AI Carrier with ship of type \"{carrier}\".", 1, DebugLogMessageErrorLevel.Warning);

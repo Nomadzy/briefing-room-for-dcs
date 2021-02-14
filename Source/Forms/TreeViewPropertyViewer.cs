@@ -38,6 +38,8 @@ namespace BriefingRoom4DCSWorld.Forms
         private readonly ContextMenuStrip ContextMenu;
         private Type ObjectType { get { return typeof(T); } }
 
+        private string RandomString { get { return GetEnumDisplayName(typeof(AmountN), AmountN.Random); } }
+
         public TreeViewPropertyViewer(T selectedObject, TreeView templateTreeView)
         {
             SelectedObject = selectedObject;
@@ -123,6 +125,14 @@ namespace BriefingRoom4DCSWorld.Forms
                         DBEntry entry = Database.Instance.GetEntry(dsa.DBEntryType, valueString);
                         if (entry != null) valueString = entry.GUIDisplayName;
                     }
+                }
+                else if (pi.GetCustomAttribute<IntegerSourceAttribute>() != null)
+                {
+                    IntegerSourceAttribute isa = pi.GetCustomAttribute<IntegerSourceAttribute>();
+                    if (isa.RandomValue.HasValue && (isa.RandomValue.Value == (int)value))
+                        valueString = RandomString;
+                    else
+                        valueString = isa.Format.Replace("%i", valueString);
                 }
 
                 tn.Text = $"{GetPropertyDisplayName(pi.Name)}: {valueString}";
@@ -229,7 +239,7 @@ namespace BriefingRoom4DCSWorld.Forms
         private void AddDBEntriesToContextMenu(ToolStripItemCollection itemCollection, DatabaseSourceAttribute dsa)
         {
             if (dsa.AllowRandom)
-                itemCollection.Add("(Random)").Tag = "";
+                itemCollection.Add(RandomString).Tag = "";
 
             ToolStripMenuItem tsmi;
 
@@ -275,7 +285,7 @@ namespace BriefingRoom4DCSWorld.Forms
         private void AddIntegersToContextMenu(ToolStripItemCollection itemCollection, IntegerSourceAttribute isa)
         {
             if (isa.RandomValue.HasValue)
-                itemCollection.Add("(Random)").Tag = isa.RandomValue.Value;
+                itemCollection.Add(RandomString).Tag = isa.RandomValue.Value;
 
             for (int i = isa.Min; i <= isa.Max; i += isa.Increment)
                 itemCollection.Add(isa.Format.Replace("%i", i.ToString())).Tag = i;

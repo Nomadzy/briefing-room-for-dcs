@@ -141,23 +141,23 @@ namespace BriefingRoom4DCSWorld.Campaign
 
             MissionTemplate template = new MissionTemplate();
 
-            template.ContextCoalitionBlue = campaignTemplate.ContextCoalitionsBlue;
-            template.ContextCoalitionPlayer = campaignTemplate.PlayerCoalition;
-            template.ContextCoalitionRed = campaignTemplate.ContextCoalitionsRed;
+            template.CoalitionAllies = campaignTemplate.ContextCoalitionsBlue;
+            template.CoalitionAlliesSide = campaignTemplate.PlayerCoalition;
+            template.CoalitionEnemies = campaignTemplate.ContextCoalitionsRed;
 
             template.EnvironmentTimeOfDay = GetTimeOfDayForMission(campaignTemplate.EnvironmentNightMissionChance);
             template.EnvironmentWeather = GetWeatherForMission(campaignTemplate.EnvironmentBadWeatherChance);
-            template.EnvironmentWind = Wind.Auto;
+            template.EnvironmentWeatherWind = Wind.Auto;
 
             template.ObjectiveCount = GetObjectiveCountForMission(campaignTemplate.MissionsObjectiveCount);
             template.ObjectiveDistanceNM = Database.Instance.Common.DistanceFromTakeOffLocation[(int)campaignTemplate.MissionsObjectiveDistance];
-            template.ObjectiveType = Toolbox.RandomFrom(campaignTemplate.MissionsTypes);
+            template.Objective = Toolbox.RandomFrom(campaignTemplate.MissionsTypes);
 
-            template.OppositionAirDefense = GetPowerLevel(campaignTemplate.SituationEnemyAirDefense, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
-            template.OppositionAirForce = GetPowerLevel(campaignTemplate.SituationEnemyAirForce, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
-            template.OppositionSkillLevelAir = GetSkillLevel(campaignTemplate.SituationEnemyAirForce, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
-            template.OppositionSkillLevelGround = GetSkillLevel(campaignTemplate.SituationEnemyAirDefense, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
-            template.OppositionUnitsLocation = SpawnPointPreferredCoalition.Any;
+            template.CoalitionEnemiesAirDefense = GetPowerLevel(campaignTemplate.SituationEnemyAirDefense, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
+            template.CoalitionEnemiesAirForce = GetPowerLevel(campaignTemplate.SituationEnemyAirForce, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
+            template.CoalitionEnemiesSkillLevelAir = GetSkillLevel(campaignTemplate.SituationEnemyAirForce, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
+            template.CoalitionEnemiesSkillLevelGround = GetSkillLevel(campaignTemplate.SituationEnemyAirDefense, campaignTemplate.SituationVariation, index, campaignTemplate.MissionsCount);
+            template.CoalitionEnemiesUnitsLocation = SpawnPointPreferredCoalition.Any;
 
             template.OptionsCivilianTraffic = campaignTemplate.OptionsCivilianTraffic;
             template.OptionsEndMode = MissionEndMode.NoEnd;
@@ -166,7 +166,7 @@ namespace BriefingRoom4DCSWorld.Campaign
             template.OptionsScriptExtensions = new string[0];
             template.OptionsUnitMods = campaignTemplate.OptionsUnitMods;
 
-            template.PlayerAISkillLevel = GetSkillLevel(campaignTemplate.SituationFriendlyAirForce, CampaignDifficultyVariation.Steady, 0, 0);
+            template.CoalitionAlliesSkillLevel = GetSkillLevel(campaignTemplate.SituationFriendlyAirForce, CampaignDifficultyVariation.Steady, 0, 0);
             template.PlayerEscortCAP = Toolbox.RandomFrom(2, 2, 2, 2, 3, 4, 4);
             template.PlayerEscortSEAD = Toolbox.RandomFrom(2, 2, 2, 2, 3, 4, 4);
             template.PlayerMPFlightGroups = new MissionTemplateMPFlightGroup[0];

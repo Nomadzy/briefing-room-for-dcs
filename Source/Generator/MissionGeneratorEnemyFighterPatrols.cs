@@ -64,7 +64,7 @@ namespace BriefingRoom4DCSWorld.Generator
             }
             int totalAirForcePower =
                 (int)(GetMissionPackageAirPower(template, objectiveDB, aiEscortTypeCAP, aiEscortTypeSEAD) *
-                Database.Instance.Common.EnemyCAPRelativePower[(int)template.OppositionAirForce.Get()]);
+                Database.Instance.Common.EnemyCAPRelativePower[(int)template.CoalitionEnemiesAirForce.Get()]);
 
             DebugLog.Instance.WriteLine($"Enemy air power set to {totalAirForcePower}...", 1);
 
@@ -110,7 +110,7 @@ namespace BriefingRoom4DCSWorld.Generator
                     mission, Enumerable.Repeat(unitTypes[0], groupSize).ToArray(),
                     Side.Enemy, spawnPoint.Value.Coordinates,
                     "GroupAircraftCAP", "UnitAircraft",
-                    Toolbox.BRSkillLevelToDCSSkillLevel(template.OppositionSkillLevelAir),
+                    Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionEnemiesSkillLevelAir),
                     flags, UnitTaskPayload.AirToAir,
                     mission.ObjectivesCenter + Coordinates.CreateRandom(20, 40) * Toolbox.NM_TO_METERS);
 
@@ -119,7 +119,7 @@ namespace BriefingRoom4DCSWorld.Generator
                 else
                 {
                     DebugLog.Instance.WriteLine($"Added a group of {groupSize}× {unitTypes[0]} at {spawnPoint.Value.Coordinates}");
-                    mission.AircraftSpawnQueue.Add(new DCSMissionAircraftSpawnQueueItem(group.GroupID, template.OppositionOnStationChance.RollChance()));
+                    mission.AircraftSpawnQueue.Add(new DCSMissionAircraftSpawnQueueItem(group.GroupID, template.CoalitionEnemiesAirForceOnStationChance.RollChance()));
                 }
 
                 aircraftCount += groupSize;

@@ -85,7 +85,7 @@ namespace BriefingRoom4DCSWorld.DB
         public int[] DistanceFromTakeOffLocation { get; }
 
         /// <summary>
-        /// Settings for enemy air defense, according to mission template <see cref="Template.MissionTemplate.OppositionAirDefense"/> setting.
+        /// Settings for enemy air defense, according to mission template <see cref="Template.MissionTemplate.CoalitionEnemiesAirDefense"/> setting.
         /// </summary>
         public DatabaseCommonAirDefenseInfo[] EnemyAirDefense { get; }
 
@@ -115,7 +115,7 @@ namespace BriefingRoom4DCSWorld.DB
         public double[] EnemyCAPRelativePower { get; }
 
         /// <summary>
-        /// Settings for enemy air defense, according to mission template <see cref="Template.MissionTemplate.PlayerFriendlyAirDefense"/> setting.
+        /// Settings for enemy air defense, according to mission template <see cref="Template.MissionTemplate.CoalitionAlliesAirDefense"/> setting.
         /// </summary>
         public DatabaseCommonAirDefenseInfo[] AllyAirDefense { get; }
 

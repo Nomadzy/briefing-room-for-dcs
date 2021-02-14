@@ -56,22 +56,22 @@ namespace BriefingRoom4DCSWorld.Generator
             ally = _ally;
             if (ally)
             {
-                airDefense = template.PlayerFriendlyAirDefense.Get();
+                airDefense = template.CoalitionAlliesAirDefense.Get();
                 centerPoint = mission.InitialPosition;
                 opposingPoint = mission.ObjectivesCenter;
                 distsFromCenter = Database.Instance.Common.AllyAirDefenseDistanceFromTakeOffLocation;
                 minDistFromOpposingPoint = Database.Instance.Common.AllyAirDefenseDistanceFromObjectives;
-                skillLevel = template.PlayerAISkillLevel;
+                skillLevel = template.CoalitionAlliesSkillLevel;
                 optionsShowEnemyUnits = 0;
                 return;
             }
 
-            airDefense = template.OppositionAirDefense.Get();
+            airDefense = template.CoalitionEnemiesAirDefense.Get();
             centerPoint = mission.ObjectivesCenter;
             opposingPoint = mission.InitialPosition;
             distsFromCenter = Database.Instance.Common.EnemyAirDefenseDistanceFromObjectives;
             minDistFromOpposingPoint = Database.Instance.Common.EnemyAirDefenseDistanceFromTakeOffLocation;
-            skillLevel = template.OppositionSkillLevelGround;
+            skillLevel = template.CoalitionEnemiesSkillLevelGround;
             optionsShowEnemyUnits = template.OptionsPreferences.Contains(MissionTemplatePreferences.HideEnemyUnits) ? DCSMissionUnitGroupFlags.Hidden : 0;
         }
 

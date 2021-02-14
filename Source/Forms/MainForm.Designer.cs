@@ -251,7 +251,7 @@
             // 
             this.TemplateTreeView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(133)))), ((int)(((byte)(203)))));
             this.TemplateTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TemplateTreeView.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TemplateTreeView.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TemplateTreeView.ForeColor = System.Drawing.Color.White;
             this.TemplateTreeView.Location = new System.Drawing.Point(0, 25);
             this.TemplateTreeView.Name = "TemplateTreeView";

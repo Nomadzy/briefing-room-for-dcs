@@ -81,10 +81,10 @@ namespace BriefingRoom4DCSWorld.Generator
 
                 DCSSkillLevel skillLevel;
                 if (side == Side.Ally)
-                    skillLevel = Toolbox.BRSkillLevelToDCSSkillLevel(template.PlayerAISkillLevel);
+                    skillLevel = Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionAlliesSkillLevel);
                 else
                     skillLevel = Toolbox.IsUnitFamilyAircraft(unitFamily) ?
-                        Toolbox.BRSkillLevelToDCSSkillLevel(template.OppositionSkillLevelAir) : Toolbox.BRSkillLevelToDCSSkillLevel(template.OppositionSkillLevelGround);
+                        Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionEnemiesSkillLevelAir) : Toolbox.BRSkillLevelToDCSSkillLevel(template.CoalitionEnemiesSkillLevelGround);
 
                 DCSMissionUnitGroupFlags flags = 0;
 

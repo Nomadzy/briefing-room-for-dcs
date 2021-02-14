@@ -52,28 +52,76 @@ namespace BriefingRoom4DCSWorld.Template
         }
 
         /// <summary>
-        /// Unit system to use in the mission briefing.
-        /// </summary>
-        [TreeViewParentNode("Options")]
-        public UnitSystem BriefingUnitSystem { get; set; }
-
-        /// <summary>
-        /// Who belongs to the blue coalition?
+        /// Who belongs to the players' coalition?
         /// </summary>
         [DatabaseSource(typeof(DBEntryCoalition))]
-        public string ContextCoalitionBlue { get; set; }
+        public string CoalitionAllies { get; set; }
+
+        /// <summary>
+        /// Intensity and quality of friendly air defense.
+        /// </summary>
+        [TreeViewParentNode("CoalitionAllies")]
+        public AmountN CoalitionAlliesAirDefense { get; set; }
+
+        /// <summary>
+        /// Skill level of AI wingmen and escort aircraft.
+        /// </summary>
+        [TreeViewParentNode("CoalitionAllies")]
+        public BRSkillLevel CoalitionAlliesSkillLevel { get; set; }
 
         /// <summary>
         /// Which coalition does the player(s) belong to?
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionBlue")]
-        public Coalition ContextCoalitionPlayer { get; set; }
+        [TreeViewParentNode("CoalitionAllies")]
+        public Coalition CoalitionAlliesSide { get; set; }
 
         /// <summary>
-        /// Who belongs to the red coalition?
+        /// Who belongs to the enemy coalition?
         /// </summary>
         [DatabaseSource(typeof(DBEntryCoalition))]
-        public string ContextCoalitionRed { get; set; }
+        public string CoalitionEnemies { get; set; }
+
+        /// <summary>
+        /// Intensity and quality of enemy air defense.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemies")]
+        public AmountN CoalitionEnemiesAirDefense { get; set; }
+
+        /// <summary>
+        /// Relative power of the enemy air force.
+        /// Enemy air force will always be proportional to the number and air-to-air efficiency of aircraft in the player mission package,
+        /// so more player/AI friendly aircraft means more enemy aircraft, regardless of this setting.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemies")]
+        public AmountN CoalitionEnemiesAirForce { get; set; }
+
+        /// <summary>
+        /// Chance that enemy fighter planes will already be patrolling on mission start rather than popping up during the mission on objective completion.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemiesAirForce")]
+        public AmountN CoalitionEnemiesAirForceOnStationChance { get; set; }
+
+        /// <summary>
+        /// Skill level of enemy planes and helicopters.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemies")]
+        public BRSkillLevel CoalitionEnemiesSkillLevelAir { get; set; }
+
+        /// <summary>
+        /// Skill level of enemy ground units and air defense.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemies")]
+        public BRSkillLevel CoalitionEnemiesSkillLevelGround { get; set; }
+
+        /// <summary>
+        /// Can enemy units be spawned in any country (recommended) or only in countries aligned with a
+        /// given coalition? Be aware that when choosing an option other than "Any", depending on the theater and the
+        /// <see cref="TheaterRegionsCoalitions"/> setting, objectives may end up VERY far from the player(s) starting 
+        /// location, no matter the value of <see cref="ObjectiveDistance"/>.
+        /// Keep in mind that <see cref="TheaterRegionsCoalitions"/> has a influence on this setting.
+        /// </summary>
+        [TreeViewParentNode("CoalitionEnemies")]
+        public SpawnPointPreferredCoalition CoalitionEnemiesUnitsLocation { get; set; }
 
         /// <summary>
         /// During which decade will this mission take place? This value is ignored if Briefing/Mission date is set.
@@ -102,72 +150,33 @@ namespace BriefingRoom4DCSWorld.Template
         /// How windy will the weather be during the mission. "Auto" means "choose according to <see cref="EnvironmentWeather"/>".
         /// </summary>
         [TreeViewParentNode("EnvironmentWeather")]
-        public Wind EnvironmentWind { get; set; }
-
-        /// <summary>
-        /// How many objectives/targets will be present in the mission.
-        /// </summary>
-        [TreeViewParentNode("ObjectiveType")]
-        [IntegerSource(1, TemplateTools.MAX_OBJECTIVES, 1)]
-        public int ObjectiveCount { get { return ObjectiveCount_; } set { ObjectiveCount_ = Toolbox.Clamp(value, 1, TemplateTools.MAX_OBJECTIVES); } }
-        private int ObjectiveCount_;
-
-        /// <summary>
-        /// How far from the player's starting location will the objectives be, in nautical miles. "Zero" means "random".
-        /// </summary>
-        [TreeViewParentNode("ObjectiveType")]
-        [IntegerSource(TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 10, "%i nm", true, 0)]
-        public int ObjectiveDistanceNM { get { return ObjectiveDistanceNM_; } set { ObjectiveDistanceNM_ = TemplateTools.CheckObjectiveDistance(value); } }
-        private int ObjectiveDistanceNM_;
+        public Wind EnvironmentWeatherWind { get; set; }
 
         /// <summary>
         /// The type of task player must accomplish in this mission.
         /// </summary>
         [DatabaseSource(typeof(DBEntryObjective), true)]
-        public string ObjectiveType { get { return ObjectiveType_; } set { ObjectiveType_ = TemplateTools.CheckValue<DBEntryObjective>(value); } }
-        private string ObjectiveType_;
+        public string Objective { get; set; }
 
         /// <summary>
-        /// Intensity and quality of enemy air defense.
+        /// How many objectives/targets will be present in the mission.
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public AmountN OppositionAirDefense { get; set; }
+        [TreeViewParentNode("Objective")]
+        [IntegerSource(1, TemplateTools.MAX_OBJECTIVES, 1)]
+        public int ObjectiveCount { get; set; }
 
         /// <summary>
-        /// Relative power of the enemy air force.
-        /// Enemy air force will always be proportional to the number and air-to-air efficiency of aircraft in the player mission package,
-        /// so more player/AI friendly aircraft means more enemy aircraft, regardless of this setting.
+        /// How far from the player's starting location will the objectives be, in nautical miles. "Zero" means "random".
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public AmountN OppositionAirForce { get; set; }
+        [TreeViewParentNode("Objective")]
+        [IntegerSource(TemplateTools.MIN_OBJECTIVE_DISTANCE, TemplateTools.MAX_OBJECTIVE_DISTANCE, 10, "%i nm", true, 0)]
+        public int ObjectiveDistanceNM { get; set; }
 
         /// <summary>
-        /// Chance that enemy fighter planes will already be patrolling on mission start rather than popping up during the mission on objective completion.
+        /// Unit system to use in the mission briefing.
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public AmountN OppositionOnStationChance { get; set; }
-
-        /// <summary>
-        /// Skill level of enemy planes and helicopters.
-        /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public BRSkillLevel OppositionSkillLevelAir { get; set; }
-
-        /// <summary>
-        /// Skill level of enemy ground units and air defense.
-        /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public BRSkillLevel OppositionSkillLevelGround { get; set; }
-
-        /// <summary>
-        /// Can enemy units be spawned in any country (recommended) or only in countries aligned with a
-        /// given coalition? Be aware that when choosing an option other than "Any", depending on the theater and the
-        /// <see cref="TheaterRegionsCoalitions"/> setting, objectives may end up VERY far from the player(s) starting 
-        /// location, no matter the value of <see cref="ObjectiveDistance"/>.
-        /// Keep in mind that <see cref="TheaterRegionsCoalitions"/> has a influence on this setting.
-        /// </summary>
-        [TreeViewParentNode("ContextCoalitionRed")]
-        public SpawnPointPreferredCoalition OppositionUnitsLocation { get; set; }
+        [TreeViewParentNode("Options")]
+        public UnitSystem OptionsBriefingUnitSystem { get; set; }
 
         /// <summary>
         /// Amount of civilian traffic on the roads. Can affect performance if set too high.
@@ -242,12 +251,6 @@ namespace BriefingRoom4DCSWorld.Template
         public string PlayerSPCarrier { get; set; }
 
         /// <summary>
-        /// Skill level of AI wingmen and escort aircraft.
-        /// </summary>
-        [TreeViewParentNode("ContextCoalitionBlue")]
-        public BRSkillLevel PlayerAISkillLevel { get; set; }
-
-        /// <summary>
         /// Number of AI aircraft tasked with escorting the player against enemy fighters.
         /// In single-player missions, escorts will be spawned on the ramp if the player starts from the ramp (cold or hot), or in the air above the airbase if the player starts on the runway.
         /// In multiplayer missions, escorts will be spawned as soon as one player takes off.
@@ -264,12 +267,6 @@ namespace BriefingRoom4DCSWorld.Template
         [TreeViewParentNode("Players")]
         public int PlayerEscortSEAD { get { return PlayerEscortSEAD_; } set { PlayerEscortSEAD_ = Toolbox.Clamp(value, 0, Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE); } }
         private int PlayerEscortSEAD_;
-
-        /// <summary>
-        /// Intensity and quality of friendly air defense.
-        /// </summary>
-        [TreeViewParentNode("ContextCoalitionBlue")]
-        public AmountN PlayerFriendlyAirDefense { get; set; }
 
         /// <summary>
         /// Where should the player(s) take off from?
@@ -305,28 +302,28 @@ namespace BriefingRoom4DCSWorld.Template
             //BriefingDate = new MissionTemplateDate();
             //BriefingDescription = "";
             //BriefingName = "";
-            BriefingUnitSystem = UnitSystem.Imperial;
+            OptionsBriefingUnitSystem = UnitSystem.Imperial;
 
-            ContextCoalitionBlue = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionBlue);
-            ContextCoalitionPlayer = Coalition.Blue;
-            ContextCoalitionRed = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionRed);
+            CoalitionAllies = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionBlue);
+            CoalitionAlliesSide = Coalition.Blue;
+            CoalitionEnemies = TemplateTools.CheckValue<DBEntryCoalition>(Database.Instance.Common.DefaultCoalitionRed);
             Decade = Decade.Decade2000;
 
             EnvironmentSeason = Season.Random;
             EnvironmentTimeOfDay = TimeOfDay.RandomDaytime;
             EnvironmentWeather = Weather.Random;
-            EnvironmentWind = Wind.Auto;
+            EnvironmentWeatherWind = Wind.Auto;
 
+            Objective = TemplateTools.CheckValue<DBEntryObjective>(Database.Instance.Common.DefaultObjective);
             ObjectiveCount = Database.Instance.Common.DefaultObjectiveCount;
-            ObjectiveDistanceNM = 0;
-            ObjectiveType = TemplateTools.CheckValue<DBEntryObjective>(Database.Instance.Common.DefaultObjective);
+            ObjectiveDistanceNM = TemplateTools.CheckObjectiveDistance(0);
 
-            OppositionAirDefense = AmountN.Random;
-            OppositionAirForce = AmountN.Random;
-            OppositionOnStationChance = AmountN.Random;
-            OppositionSkillLevelAir = BRSkillLevel.Random;
-            OppositionSkillLevelGround = BRSkillLevel.Random;
-            OppositionUnitsLocation = SpawnPointPreferredCoalition.Any;
+            CoalitionEnemiesAirDefense = AmountN.Random;
+            CoalitionEnemiesAirForce = AmountN.Random;
+            CoalitionEnemiesAirForceOnStationChance = AmountN.Random;
+            CoalitionEnemiesSkillLevelAir = BRSkillLevel.Random;
+            CoalitionEnemiesSkillLevelGround = BRSkillLevel.Random;
+            CoalitionEnemiesUnitsLocation = SpawnPointPreferredCoalition.Any;
 
             OptionsCivilianTraffic = CivilianTraffic.Low;
             OptionsEndMode = MissionEndMode.NoEnd;
@@ -335,10 +332,10 @@ namespace BriefingRoom4DCSWorld.Template
             OptionsScriptExtensions = new string[0];
             OptionsUnitMods = new string[0];
 
-            PlayerAISkillLevel = BRSkillLevel.Random;
+            CoalitionAlliesSkillLevel = BRSkillLevel.Random;
             PlayerEscortCAP = 0;
             PlayerEscortSEAD = 0;
-            PlayerFriendlyAirDefense = AmountN.Random;
+            CoalitionAlliesAirDefense = AmountN.Random;
             PlayerStartLocation = PlayerStartLocation.Runway;
 
             PlayerMPFlightGroups = new MissionTemplateMPFlightGroup[0];
@@ -363,28 +360,28 @@ namespace BriefingRoom4DCSWorld.Template
 
             using (INIFile ini = new INIFile(filePath))
             {
-                BriefingUnitSystem = ini.GetValue("Briefing", "UnitSystem", BriefingUnitSystem);
+                OptionsBriefingUnitSystem = ini.GetValue("Briefing", "UnitSystem", OptionsBriefingUnitSystem);
 
-                ContextCoalitionBlue = ini.GetValue("Context", "Coalition.Blue", ContextCoalitionBlue);
-                ContextCoalitionPlayer = ini.GetValue("Context", "Coalition.Player", ContextCoalitionPlayer);
-                ContextCoalitionRed = ini.GetValue("Context", "Coalition.Red", ContextCoalitionRed);
+                CoalitionAllies = ini.GetValue("Context", "Coalition.Blue", CoalitionAllies);
+                CoalitionAlliesSide = ini.GetValue("Context", "Coalition.Player", CoalitionAlliesSide);
+                CoalitionEnemies = ini.GetValue("Context", "Coalition.Red", CoalitionEnemies);
                 Decade = ini.GetValue("Context", "Decade", Decade);
 
                 EnvironmentSeason = ini.GetValue("Environment", "Season", EnvironmentSeason);
                 EnvironmentTimeOfDay = ini.GetValue("Environment", "TimeOfDay", EnvironmentTimeOfDay);
                 EnvironmentWeather = ini.GetValue("Environment", "Weather", EnvironmentWeather);
-                EnvironmentWind = ini.GetValue("Environment", "Wind", EnvironmentWind);
+                EnvironmentWeatherWind = ini.GetValue("Environment", "Wind", EnvironmentWeatherWind);
 
-                ObjectiveCount = ini.GetValue("Objective", "Count", ObjectiveCount);
-                ObjectiveDistanceNM = ini.GetValue("Objective", "Distance", ObjectiveDistanceNM);
-                ObjectiveType = ini.GetValue("Objective", "Type", ObjectiveType);
-
-                OppositionAirDefense = ini.GetValue("Opposition", "AirDefense", OppositionAirDefense);
-                OppositionAirForce = ini.GetValue("Opposition", "AirForce", OppositionAirForce);
-                OppositionOnStationChance = ini.GetValue("Opposition", "OnStationChance", OppositionOnStationChance);
-                OppositionSkillLevelAir = ini.GetValue("Opposition", "SkillLevel.Air", OppositionSkillLevelAir);
-                OppositionSkillLevelGround = ini.GetValue("Opposition", "SkillLevel.Ground", OppositionSkillLevelGround);
-                OppositionUnitsLocation = ini.GetValue("Opposition", "UnitsLocation", OppositionUnitsLocation);
+                Objective = TemplateTools.CheckValue<DBEntryObjective>(ini.GetValue("Objective", "Type", Objective));
+                ObjectiveCount = Toolbox.Clamp(ini.GetValue("Objective", "Count", ObjectiveCount), 1, TemplateTools.MAX_OBJECTIVES);
+                ObjectiveDistanceNM = TemplateTools.CheckObjectiveDistance(ini.GetValue("Objective", "Distance", ObjectiveDistanceNM));
+                
+                CoalitionEnemiesAirDefense = ini.GetValue("Opposition", "AirDefense", CoalitionEnemiesAirDefense);
+                CoalitionEnemiesAirForce = ini.GetValue("Opposition", "AirForce", CoalitionEnemiesAirForce);
+                CoalitionEnemiesAirForceOnStationChance = ini.GetValue("Opposition", "OnStationChance", CoalitionEnemiesAirForceOnStationChance);
+                CoalitionEnemiesSkillLevelAir = ini.GetValue("Opposition", "SkillLevel.Air", CoalitionEnemiesSkillLevelAir);
+                CoalitionEnemiesSkillLevelGround = ini.GetValue("Opposition", "SkillLevel.Ground", CoalitionEnemiesSkillLevelGround);
+                CoalitionEnemiesUnitsLocation = ini.GetValue("Opposition", "UnitsLocation", CoalitionEnemiesUnitsLocation);
 
                 OptionsCivilianTraffic = ini.GetValue("Options", "CivilianTraffic", OptionsCivilianTraffic);
                 OptionsEndMode = ini.GetValue("Options", "EndMode", OptionsEndMode);
@@ -393,10 +390,10 @@ namespace BriefingRoom4DCSWorld.Template
                 OptionsScriptExtensions = ini.GetValueArray<string>("Options", "ScriptExtensions");
                 OptionsUnitMods = ini.GetValueArray<string>("Options", "UnitMods");
 
-                PlayerAISkillLevel = ini.GetValue("Player", "AISkillLevel", PlayerAISkillLevel);
+                CoalitionAlliesSkillLevel = ini.GetValue("Player", "AISkillLevel", CoalitionAlliesSkillLevel);
                 PlayerEscortCAP = ini.GetValue("Player", "EscortCAP", PlayerEscortCAP);
                 PlayerEscortSEAD = ini.GetValue("Player", "EscortSEAD", PlayerEscortSEAD);
-                PlayerFriendlyAirDefense = ini.GetValue("Player", "FriendlyAirDefense", PlayerFriendlyAirDefense);
+                CoalitionAlliesAirDefense = ini.GetValue("Player", "FriendlyAirDefense", CoalitionAlliesAirDefense);
                 PlayerStartLocation = ini.GetValue("Player", "StartLocation", PlayerStartLocation);
 
                 int fgFlightGroupCount = Math.Max(0, ini.GetValue<int>("PlayerMP", "FGCount"));
@@ -424,28 +421,28 @@ namespace BriefingRoom4DCSWorld.Template
         {
             using (INIFile ini = new INIFile())
             {
-                ini.SetValue("Briefing", "UnitSystem", BriefingUnitSystem);
+                ini.SetValue("Briefing", "UnitSystem", OptionsBriefingUnitSystem);
 
-                ini.SetValue("Context", "Coalition.Blue", ContextCoalitionBlue);
-                ini.SetValue("Context", "Coalition.Player", ContextCoalitionPlayer);
-                ini.SetValue("Context", "Coalition.Red", ContextCoalitionRed);
+                ini.SetValue("Context", "Coalition.Blue", CoalitionAllies);
+                ini.SetValue("Context", "Coalition.Player", CoalitionAlliesSide);
+                ini.SetValue("Context", "Coalition.Red", CoalitionEnemies);
                 ini.SetValue("Context", "Decade", Decade);
 
                 ini.SetValue("Environment", "Season", EnvironmentSeason);
                 ini.SetValue("Environment", "TimeOfDay", EnvironmentTimeOfDay);
                 ini.SetValue("Environment", "Weather", EnvironmentWeather);
-                ini.SetValue("Environment", "Wind", EnvironmentWind);
+                ini.SetValue("Environment", "Wind", EnvironmentWeatherWind);
 
                 ini.SetValue("Objective", "Count", ObjectiveCount);
                 ini.SetValue("Objective", "Distance", ObjectiveDistanceNM);
-                ini.SetValue("Objective", "Type", ObjectiveType);
+                ini.SetValue("Objective", "Type", Objective);
 
-                ini.SetValue("Opposition", "AirDefense", OppositionAirDefense);
-                ini.SetValue("Opposition", "AirForce", OppositionAirForce);
-                ini.SetValue("Opposition", "OnStationChance", OppositionOnStationChance);
-                ini.SetValue("Opposition", "SkillLevel.Air", OppositionSkillLevelAir);
-                ini.SetValue("Opposition", "SkillLevel.Ground", OppositionSkillLevelGround);
-                ini.SetValue("Opposition", "UnitsLocation", OppositionUnitsLocation);
+                ini.SetValue("Opposition", "AirDefense", CoalitionEnemiesAirDefense);
+                ini.SetValue("Opposition", "AirForce", CoalitionEnemiesAirForce);
+                ini.SetValue("Opposition", "OnStationChance", CoalitionEnemiesAirForceOnStationChance);
+                ini.SetValue("Opposition", "SkillLevel.Air", CoalitionEnemiesSkillLevelAir);
+                ini.SetValue("Opposition", "SkillLevel.Ground", CoalitionEnemiesSkillLevelGround);
+                ini.SetValue("Opposition", "UnitsLocation", CoalitionEnemiesUnitsLocation);
 
                 ini.SetValue("Options", "CivilianTraffic", OptionsCivilianTraffic);
                 ini.SetValue("Options", "EndMode", OptionsEndMode);
@@ -454,15 +451,15 @@ namespace BriefingRoom4DCSWorld.Template
                 ini.SetValueArray("Options", "ScriptExtensions", OptionsScriptExtensions);
                 ini.SetValueArray("Options", "UnitMods", OptionsUnitMods);
 
-                ini.SetValue("Player", "AISkillLevel", PlayerAISkillLevel);
+                ini.SetValue("Player", "AISkillLevel", CoalitionAlliesSkillLevel);
                 ini.SetValue("Player", "EscortCAP", PlayerEscortCAP);
                 ini.SetValue("Player", "EscortSEAD", PlayerEscortSEAD);
-                ini.SetValue("Player", "FriendlyAirDefense", PlayerFriendlyAirDefense);
+                ini.SetValue("Player", "FriendlyAirDefense", CoalitionAlliesAirDefense);
                 ini.SetValue("Player", "StartLocation", PlayerStartLocation);
 
                 ini.SetValue("PlayerSP", "Aircraft", PlayerSPAircraft);
                 ini.SetValue("PlayerSP", "Wingmen", PlayerSPWingmen);
-                ini.SetValue("PlayerSP", "Wingmen.SkillLevel", PlayerAISkillLevel);
+                ini.SetValue("PlayerSP", "Wingmen.SkillLevel", CoalitionAlliesSkillLevel);
                 ini.SetValue("PlayerSP", "Carrier", PlayerSPCarrier);
 
                 ini.SetValue("PlayerMP", "FGCount", PlayerMPFlightGroups.Length);
@@ -478,14 +475,14 @@ namespace BriefingRoom4DCSWorld.Template
         }
 
         /// <summary>
-        /// "Shortcut" method to get <see cref="ContextCoalitionBlue"/> or <see cref="ContextCoalitionRed"/> by using a <see cref="Coalition"/> parameter.
+        /// "Shortcut" method to get <see cref="CoalitionAllies"/> or <see cref="CoalitionEnemies"/> by using a <see cref="Coalition"/> parameter.
         /// </summary>
         /// <param name="coalition">Color of the coalition to return</param>
-        /// <returns><see cref="ContextCoalitionBlue"/> or <see cref="ContextCoalitionRed"/></returns>
+        /// <returns><see cref="CoalitionAllies"/> or <see cref="CoalitionEnemies"/></returns>
         public string GetCoalition(Coalition coalition)
         {
-            if (coalition == Coalition.Red) return ContextCoalitionRed;
-            return ContextCoalitionBlue;
+            if (coalition == Coalition.Red) return CoalitionEnemies;
+            return CoalitionAllies;
         }
 
         /// <summary>

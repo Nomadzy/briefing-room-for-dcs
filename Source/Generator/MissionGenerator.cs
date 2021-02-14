@@ -79,9 +79,9 @@ namespace BriefingRoom4DCSWorld.Generator
             DebugLog.Instance.WriteLine($"Starting mission generation...");
 
             // Check for missing entries in the database
-            GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.ContextCoalitionBlue);
-            GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.ContextCoalitionRed);
-            GeneratorTools.CheckDBForMissingEntry<DBEntryObjective>(template.ObjectiveType);
+            GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.CoalitionAllies);
+            GeneratorTools.CheckDBForMissingEntry<DBEntryCoalition>(template.CoalitionEnemies);
+            GeneratorTools.CheckDBForMissingEntry<DBEntryObjective>(template.Objective);
             GeneratorTools.CheckDBForMissingEntry<DBEntryTheater>(template.Theater);
 
             // Create the mission and copy some values (theater database entry ID, etc.) from the template
@@ -90,13 +90,13 @@ namespace BriefingRoom4DCSWorld.Generator
 
             // Get some DB entries from the database for easier reference
             DBEntryCoalition[] coalitionsDB = new DBEntryCoalition[2];
-            coalitionsDB[(int)Coalition.Blue] = Database.Instance.GetEntry<DBEntryCoalition>(template.ContextCoalitionBlue);
-            coalitionsDB[(int)Coalition.Red] = Database.Instance.GetEntry<DBEntryCoalition>(template.ContextCoalitionRed);
+            coalitionsDB[(int)Coalition.Blue] = Database.Instance.GetEntry<DBEntryCoalition>(template.CoalitionAllies);
+            coalitionsDB[(int)Coalition.Red] = Database.Instance.GetEntry<DBEntryCoalition>(template.CoalitionEnemies);
             DBEntryObjective objectiveDB;
-            if(template.ObjectiveType == "Random")
+            if(template.Objective == "Random")
                 objectiveDB = Toolbox.RandomFrom<DBEntryObjective>(Database.Instance.GetAllEntries<DBEntryObjective>().Where(x => x.ID != "Random").ToArray());
             else 
-                objectiveDB = Database.Instance.GetEntry<DBEntryObjective>(template.ObjectiveType);
+                objectiveDB = Database.Instance.GetEntry<DBEntryObjective>(template.Objective);
             DBEntryTheater theaterDB = Database.Instance.GetEntry<DBEntryTheater>(template.Theater);
 
             // Create the unit maker, which will be used to generate unit groups and their properties
@@ -135,7 +135,7 @@ namespace BriefingRoom4DCSWorld.Generator
             using (MissionGeneratorWeather weather = new MissionGeneratorWeather())
             {
                 weather.GenerateWeather(mission, template.EnvironmentWeather, theaterDB);
-                weather.GenerateWind(mission, template.EnvironmentWind, theaterDB);
+                weather.GenerateWind(mission, template.EnvironmentWeatherWind, theaterDB);
             }
 
             // Generate Carrier
@@ -269,7 +269,7 @@ namespace BriefingRoom4DCSWorld.Generator
             mission.Coalitions[(int)Coalition.Blue] = template.GetCoalition(Coalition.Blue);
             mission.Coalitions[(int)Coalition.Red] = template.GetCoalition(Coalition.Red);
             mission.CivilianTraffic = template.OptionsCivilianTraffic;
-            mission.CoalitionPlayer = template.ContextCoalitionPlayer;
+            mission.CoalitionPlayer = template.CoalitionAlliesSide;
             mission.RadioAssists = template.OptionsPreferences.Contains(MissionTemplatePreferences.DCSRadioAssists);
             mission.Theater = template.Theater;
             mission.PlayerStartLocation = template.PlayerStartLocation;
