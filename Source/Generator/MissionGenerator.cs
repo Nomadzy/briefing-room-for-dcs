@@ -93,8 +93,8 @@ namespace BriefingRoom4DCSWorld.Generator
             coalitionsDB[(int)Coalition.Blue] = Database.Instance.GetEntry<DBEntryCoalition>(template.CoalitionAllies);
             coalitionsDB[(int)Coalition.Red] = Database.Instance.GetEntry<DBEntryCoalition>(template.CoalitionEnemies);
             DBEntryObjective objectiveDB;
-            if(template.Objective == "Random")
-                objectiveDB = Toolbox.RandomFrom<DBEntryObjective>(Database.Instance.GetAllEntries<DBEntryObjective>().Where(x => x.ID != "Random").ToArray());
+            if (string.IsNullOrEmpty(template.Objective))
+                objectiveDB = Toolbox.RandomFrom(Database.Instance.GetAllEntries<DBEntryObjective>());
             else 
                 objectiveDB = Database.Instance.GetEntry<DBEntryObjective>(template.Objective);
             DBEntryTheater theaterDB = Database.Instance.GetEntry<DBEntryTheater>(template.Theater);
