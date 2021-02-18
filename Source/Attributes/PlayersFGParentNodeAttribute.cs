@@ -25,17 +25,8 @@ using System;
 namespace BriefingRoom4DCSWorld.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class DatabaseSourceAttribute : Attribute
+    public class PlayersFGParentNodeAttribute : Attribute
     {
-        public Type DBEntryType { get; }
-        public bool AllowRandom { get; }
-        public DatabaseSourceAttributeSpecial Special { get; }
-
-        public DatabaseSourceAttribute(Type dbEntryType, bool allowRandom = false, DatabaseSourceAttributeSpecial special = DatabaseSourceAttributeSpecial.None)
-        {
-            DBEntryType = dbEntryType;
-            AllowRandom = allowRandom;
-            Special = special;
-        }
+        public PlayersFGParentNodeAttribute() { }
     }
 }

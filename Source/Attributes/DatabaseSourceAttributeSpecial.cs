@@ -1,7 +1,8 @@
 ﻿/*
 ==========================================================================
 This file is part of Briefing Room for DCS World, a mission
-generator for DCS World, by @akaAgar (https://github.com/akaAgar/briefing-room-for-dcs)
+generator for DCS World, by @akaAgar
+(https://github.com/akaAgar/briefing-room-for-dcs)
 
 Briefing Room for DCS World is free software: you can redistribute it
 and/or modify it under the terms of the GNU General Public License
@@ -14,28 +15,29 @@ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Briefing Room for DCS World. If not, see https://www.gnu.org/licenses/
+along with Briefing Room for DCS World.
+If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace BriefingRoom4DCSWorld.Template
+namespace BriefingRoom4DCSWorld.Attributes
 {
     /// <summary>
-    /// Enumerates possible roles assigned to a multiplayer flight group.
+    /// Enumerates various filters for <see cref="DatabaseSourceAttribute"/>.
     /// </summary>
-    public enum MissionTemplateMPFlightGroupTask
+    public enum DatabaseSourceAttributeSpecial
     {
         /// <summary>
-        /// Flight group is tasked with the mission objectives
+        /// No filter.
         /// </summary>
-        Objectives,
+        None,
         /// <summary>
-        /// Flight group is tasked with the CAP escort
+        /// Only display carriers. Only valid when source type is <see cref="DB.DBEntryUnit"/>.
         /// </summary>
-        SupportCAP,
+        Carriers,
         /// <summary>
-        /// Flight group is tasked with the SEAD escort
+        /// Only display player-controllable aircraft. Only valid when source type is <see cref="DB.DBEntryUnit"/>.
         /// </summary>
-        SupportSEAD
+        PlayerAircraft
     }
 }

@@ -142,7 +142,7 @@ namespace BriefingRoom4DCSWorld.Generator
             briefing = briefing.Replace("$MISSIONNAME$", mission.MissionName);
             briefing = briefing.Replace("$MISSIONTYPE$",
                 GeneratorTools.RemoveAfterComma(objectiveDB.ID) + " mission " +
-                ((template.GetMissionType() == MissionType.SinglePlayer) ?
+                ((template.Players == MissionPlayersType.SinglePlayer) ?
                 "(single-player)" : $"({template.GetPlayerCount()}-players multiplayer)"));
 
             // Situation summary

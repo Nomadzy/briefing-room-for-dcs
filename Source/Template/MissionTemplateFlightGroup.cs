@@ -28,9 +28,9 @@ using System.ComponentModel;
 namespace BriefingRoom4DCSWorld.Template
 {
     /// <summary>
-    /// A multiplayer flight group, to be stored in <see cref="MissionTemplate.PlayerMPFlightGroups"/>
+    /// A multiplayer flight group, to be stored in <see cref="MissionTemplate.PlayerFlightGroups"/>
     /// </summary>
-    public class MissionTemplateMPFlightGroup : IDisposable
+    public class MissionTemplateFlightGroup : IDisposable
     {
         /// <summary>
         /// Type of aircraft in this flight group.
@@ -59,12 +59,12 @@ namespace BriefingRoom4DCSWorld.Template
         /// </summary>
         [DisplayName("Task"), Description("Task assigned to this flight group. Can be the mission objectives or CAP/SEAD escort.")]
         //[TypeConverter(typeof(EnumTypeConverter<MissionTemplateMPFlightGroupTask>))]
-        public MissionTemplateMPFlightGroupTask Task { get; set; }
+        public MissionTemplateFlightGroupTask Task { get; set; }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MissionTemplateMPFlightGroup()
+        public MissionTemplateFlightGroup()
         {
             Clear();
         }
@@ -75,7 +75,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// <param name="ini">The .ini file to load from</param>
         /// <param name="section">The ini section to load from</param>
         /// <param name="key">The ini key to load from</param>
-        public MissionTemplateMPFlightGroup(INIFile ini, string section, string key)
+        public MissionTemplateFlightGroup(INIFile ini, string section, string key)
         {
             Clear();
             
@@ -93,7 +93,7 @@ namespace BriefingRoom4DCSWorld.Template
             AircraftType = TemplateTools.CheckValuePlayerAircraft(Database.Instance.Common.DefaultPlayerAircraft);
             Carrier = "";
             Count = 2;
-            Task = MissionTemplateMPFlightGroupTask.Objectives;
+            Task = MissionTemplateFlightGroupTask.Objectives;
         }
 
         /// <summary>

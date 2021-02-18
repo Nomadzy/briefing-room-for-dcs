@@ -69,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AirDefenseLevel.cs" />
+    <Compile Include="Attributes\DatabaseSourceAttributeSpecial.cs" />
+    <Compile Include="Attributes\PlayersFGParentNodeAttribute.cs" />
     <Compile Include="Attributes\IntegerSourceAttribute.cs" />
     <Compile Include="Attributes\DatabaseSourceAttribute.cs" />
     <Compile Include="Attributes\TreeViewParentNodeAttribute.cs" />
@@ -95,7 +97,7 @@
     <Compile Include="MissionEndMode.cs" />
     <Compile Include="Generator\MissionGeneratorAirDefense.cs" />
     <Compile Include="Generator\MissionGeneratorCarrier.cs" />
-    <Compile Include="MissionType.cs" />
+    <Compile Include="MissionPlayersType.cs" />
     <Compile Include="CoalitionBriefingElement.cs" />
     <Compile Include="Amount.cs" />
     <Compile Include="AirDefenseRange.cs" />
@@ -147,7 +149,7 @@
     <Compile Include="RealismOption.cs" />
     <Compile Include="Template\TemplateTools.cs" />
     <Compile Include="Side.cs" />
-    <Compile Include="Template\MissionTemplateMPFlightGroupTask.cs" />
+    <Compile Include="Template\MissionTemplateFlightGroupTask.cs" />
     <Compile Include="Generator\MissionGeneratorEnemyFighterPatrols.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -183,7 +185,7 @@
     <Compile Include="Mission\DCSMissionUnitGroupFlags.cs" />
     <Compile Include="Mission\DCSMissionUnitGroup.cs" />
     <Compile Include="Template\MissionTemplate.cs" />
-    <Compile Include="Template\MissionTemplateMPFlightGroup.cs" />
+    <Compile Include="Template\MissionTemplateFlightGroup.cs" />
     <Compile Include="Mission\DCSMissionObjective.cs" />
     <Compile Include="Miz\MizMakerLuaMapResource.cs" />
     <Compile Include="Miz\MizMakerLuaMission.cs" />

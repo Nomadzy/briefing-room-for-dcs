@@ -58,13 +58,13 @@ namespace BriefingRoom4DCSWorld.Generator
         public void GenerateCarriers(DCSMission mission, MissionTemplate template, DBEntryCoalition playerCoalitionDB)
         {
              var carriers = new string[]{};
-             if(template.GetMissionType() == MissionType.SinglePlayer){
+             if(template.Players == MissionPlayersType.SinglePlayer){
                 if (string.IsNullOrEmpty(template.PlayerSPCarrier))
                     return;
                 carriers = carriers.Append(template.PlayerSPCarrier).ToArray();
              }
              else {
-                  carriers = template.PlayerMPFlightGroups.Aggregate(new string[]{},(acc, x) => !string.IsNullOrEmpty(x.Carrier)? acc.Append(x.Carrier).ToArray() : acc);
+                  carriers = template.PlayerFlightGroups.Aggregate(new string[]{},(acc, x) => !string.IsNullOrEmpty(x.Carrier)? acc.Append(x.Carrier).ToArray() : acc);
              }
 
             if (carriers.Length == 0)

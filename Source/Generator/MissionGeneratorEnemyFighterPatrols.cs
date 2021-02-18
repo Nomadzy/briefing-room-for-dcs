@@ -140,7 +140,7 @@ namespace BriefingRoom4DCSWorld.Generator
             int airPowerRating = 0;
             DBEntryUnit aircraft;
 
-            if (template.GetMissionType() == MissionType.SinglePlayer)
+            if (template.Players == MissionPlayersType.SinglePlayer)
             {
                 // Player flight group
                 aircraft = Database.Instance.GetEntry<DBEntryUnit>(template.PlayerSPAircraft);
@@ -148,7 +148,7 @@ namespace BriefingRoom4DCSWorld.Generator
             }
             else // Mission is multi-player
             {
-                foreach (MissionTemplateMPFlightGroup fg in template.PlayerMPFlightGroups)
+                foreach (MissionTemplateFlightGroup fg in template.PlayerFlightGroups)
                 {
                     aircraft = Database.Instance.GetEntry<DBEntryUnit>(fg.AircraftType);
 
@@ -169,10 +169,10 @@ namespace BriefingRoom4DCSWorld.Generator
                             else
                                 hasAirToAirLoadout = false;
                             break;
-                        case MissionTemplateMPFlightGroupTask.SupportCAP:
+                        case MissionTemplateFlightGroupTask.SupportCAP:
                             hasAirToAirLoadout = true;
                             break;
-                        case MissionTemplateMPFlightGroupTask.SupportSEAD:
+                        case MissionTemplateFlightGroupTask.SupportSEAD:
                             hasAirToAirLoadout = false;
                             break;
 

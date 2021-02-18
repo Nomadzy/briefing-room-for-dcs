@@ -204,7 +204,7 @@ namespace BriefingRoom4DCSWorld.Generator
 
             // Add common .ogg vorbis files and make sure each only appears only once.
             mission.OggFiles.AddRange(Database.Instance.Common.CommonOGG);
-            mission.OggFiles.AddRange(Database.Instance.Common.CommonOGGForGameMode[(int)template.GetMissionType()]);
+            mission.OggFiles.AddRange(Database.Instance.Common.CommonOGGForGameMode[(int)template.Players]);
             mission.OggFiles =
                 (from string f in mission.OggFiles
                  where !string.IsNullOrEmpty(f.Trim()) select f.Trim())
@@ -221,13 +221,13 @@ namespace BriefingRoom4DCSWorld.Generator
 
             // Create aircraft queues and finalize the core script
             CreateAircraftActivationQueues(mission);
-            switch (template.GetMissionType())
+            switch (template.Players)
             {
-                case MissionType.SinglePlayer:
+                case MissionPlayersType.SinglePlayer:
                     mission.CoreLuaScript += "briefingRoom.mission.missionType = brMissionType.SINGLE_PLAYER\r\n"; break;
-                case MissionType.Cooperative:
+                case MissionPlayersType.Cooperative:
                     mission.CoreLuaScript += "briefingRoom.mission.missionType = brMissionType.COOPERATIVE\r\n"; break;
-                case MissionType.Versus:
+                case MissionPlayersType.Versus:
                     mission.CoreLuaScript += "briefingRoom.mission.missionType = brMissionType.VERSUS\r\n"; break;
             }
 
@@ -277,7 +277,7 @@ namespace BriefingRoom4DCSWorld.Generator
             mission.RealismOptions = template.OptionsRealism;
 
             // "Runway" start locations is not available in MP missions, change to "Parking hot".
-            if ((template.GetMissionType() != MissionType.SinglePlayer) &&
+            if ((template.Players != MissionPlayersType.SinglePlayer) &&
                 (template.PlayerStartLocation == PlayerStartLocation.Runway))
                 mission.PlayerStartLocation = PlayerStartLocation.ParkingHot;
         }

@@ -18,24 +18,24 @@ along with Briefing Room for DCS World. If not, see https://www.gnu.org/licenses
 ==========================================================================
 */
 
-namespace BriefingRoom4DCSWorld
+namespace BriefingRoom4DCSWorld.Template
 {
     /// <summary>
-    /// Enumerates various mission types (single player, cooperative...)
+    /// Enumerates possible roles assigned to a multiplayer flight group.
     /// </summary>
-    public enum MissionType
+    public enum MissionTemplateFlightGroupTask
     {
         /// <summary>
-        /// One-player mission.
+        /// Flight group is tasked with the mission objectives
         /// </summary>
-        SinglePlayer,
+        Objectives,
         /// <summary>
-        /// Multiplayer mission, all players are on the same side.
+        /// Flight group is tasked with the CAP escort
         /// </summary>
-        Cooperative,
+        SupportCAP,
         /// <summary>
-        /// Multiplayer mission, players on both sides.
+        /// Flight group is tasked with the SEAD escort
         /// </summary>
-        Versus
+        SupportSEAD
     }
 }

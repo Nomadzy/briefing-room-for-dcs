@@ -22,9 +22,11 @@ If not, see https://www.gnu.org/licenses/
 
 using BriefingRoom4DCSWorld.Attributes;
 using BriefingRoom4DCSWorld.DB;
+using BriefingRoom4DCSWorld.Template;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -33,12 +35,15 @@ namespace BriefingRoom4DCSWorld.Forms
     public class TreeViewPropertyViewer<T>
     {
         private readonly T SelectedObject;
+        private Type SelectedObjectType { get { return typeof(T); } }
+        
         private readonly TreeView Tree;
 
         private readonly ContextMenuStrip ContextMenu;
-        private Type ObjectType { get { return typeof(T); } }
 
         private string RandomString { get { return GetEnumDisplayName(typeof(AmountN), AmountN.Random); } }
+
+        public event EventHandler OnValueChanged = null;
 
         public TreeViewPropertyViewer(T selectedObject, TreeView templateTreeView)
         {
@@ -47,7 +52,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
             // Make the context menu a little darker so it stands out from the treeview's background
             Color contextMenuBackColor = Color.FromArgb((int)(Tree.BackColor.R * .8), (int)(Tree.BackColor.G * .8), (int)(Tree.BackColor.B * .8));
-            ContextMenu = new ContextMenuStrip { BackColor = contextMenuBackColor, Font = Tree.Font, ForeColor = Tree.ForeColor, ShowImageMargin = false, ShowItemToolTips = true };
+            ContextMenu = new ContextMenuStrip { BackColor = contextMenuBackColor, Font = Tree.Font, ForeColor = Tree.ForeColor, ShowCheckMargin = true, ShowImageMargin = false, ShowItemToolTips = true };
             ContextMenu.ItemClicked += OnContextMenuItemClicked;
 
             PopulateTreeView();
@@ -59,8 +64,8 @@ namespace BriefingRoom4DCSWorld.Forms
         {
             Tree.Nodes.Clear();
 
-            if (ObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>() != null)
-                foreach (string extraTreeNode in ObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>().ExtraNodes)
+            if (SelectedObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>() != null)
+                foreach (string extraTreeNode in SelectedObjectType.GetCustomAttribute<TreeViewExtraNodesAttribute>().ExtraNodes)
                 {
                     TreeNode node = Tree.Nodes.Add(extraTreeNode, GetPropertyDisplayName(extraTreeNode));
                     node.ToolTipText = GetPropertyToolTip(extraTreeNode);
@@ -75,7 +80,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
         private void AddTreeViewNodes(TreeNodeCollection nodes, string parentNodeName)
         {
-            foreach (PropertyInfo pi in ObjectType.GetProperties())
+            foreach (PropertyInfo pi in SelectedObjectType.GetProperties())
             {
                 TreeViewParentNodeAttribute ppa = pi.GetCustomAttribute<TreeViewParentNodeAttribute>();
                 string parent = (ppa != null) ? ppa.PropertyName : null;
@@ -95,7 +100,7 @@ namespace BriefingRoom4DCSWorld.Forms
             foreach (TreeNode tn in nodes)
             {
                 if (tn.Name == null) continue; // Node has no name, continue
-                PropertyInfo pi = ObjectType.GetProperty(tn.Name);
+                PropertyInfo pi = SelectedObjectType.GetProperty(tn.Name);
                 if (pi == null) continue; // No property has the node's name, continue
 
                 object value = pi.GetValue(SelectedObject);
@@ -135,6 +140,22 @@ namespace BriefingRoom4DCSWorld.Forms
                         valueString = isa.Format.Replace("%i", valueString);
                 }
 
+                // Node is the parent of player flight groups
+                if (pi.GetCustomAttribute<PlayersFGParentNodeAttribute>() != null)
+                {
+                    tn.Nodes.Clear();
+
+                    MissionTemplateFlightGroup[] playerFGs = (MissionTemplateFlightGroup[])SelectedObjectType.GetProperty("PlayerFlightGroups").GetValue(SelectedObject);
+
+                    for (int i = 0; i < playerFGs.Length; i++)
+                    {
+                        tn.Nodes.Add(playerFGs[i].ToString());
+
+                        // Only show the first group if single player
+                        if (((MissionPlayersType)value) == MissionPlayersType.SinglePlayer) break;
+                    }
+                }
+
                 tn.Text = $"{GetPropertyDisplayName(pi.Name)}: {valueString}";
             }
         }
@@ -153,14 +174,14 @@ namespace BriefingRoom4DCSWorld.Forms
 
         private string GetPropertyDisplayName(string internalName)
         {
-            string displayName = Database.Instance.Strings.GetString(ObjectType.Name, internalName);
+            string displayName = Database.Instance.Strings.GetString(SelectedObjectType.Name, internalName);
             if (!string.IsNullOrEmpty(displayName)) return displayName;
             return internalName;
         }
 
         private string GetPropertyToolTip(string internalName)
         {
-            return Database.Instance.Strings.GetString(ObjectType.Name, $"{internalName}.ToolTip");
+            return Database.Instance.Strings.GetString(SelectedObjectType.Name, $"{internalName}.ToolTip");
         }
 
         private void OnNodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -177,9 +198,9 @@ namespace BriefingRoom4DCSWorld.Forms
             //        e.Node.Expand();
             //}
             //else
-            if (e.Node.Tag == null) return;
+            //if (e.Node.Tag == null) return;
 
-            ShowContextMenu(e.Node.Name, e.Location);
+            ShowContextMenu(e.Node, e.Location);
             //if (e.Button == MouseButtons.Right)
             //    ShowContextMenu(e.Node.GetPath(), e.Location);
         }
@@ -190,12 +211,14 @@ namespace BriefingRoom4DCSWorld.Forms
             if ((Tree.SelectedNode == null) || (e.ClickedItem == null) || (e.ClickedItem.Tag == null))
                 return;
 
-            PropertyInfo pi = ObjectType.GetProperty(Tree.SelectedNode.Name);
+            PropertyInfo pi = SelectedObjectType.GetProperty(Tree.SelectedNode.Name);
             if (pi == null) return; // Property doesn't exist, abort
 
             if (pi.PropertyType.IsArray)
             {
-                Type arrayType = pi.PropertyType.GetElementType();
+                // TODO: arrays
+
+                //Type arrayType = pi.PropertyType.GetElementType();
 
                 //List<object> valueList = new List<object>();
                 //valueList.AddRange((object[])pi.GetValue(SelectedObject));
@@ -205,34 +228,74 @@ namespace BriefingRoom4DCSWorld.Forms
                 //    valueList.Add(e.ClickedItem.Tag);
                 //pi.SetValue(SelectedObject, valueList.ToArray());
 
+                //Array valueArray = (Array)pi.GetValue(SelectedObject);
+                //bool arrayContainsValue = false;
+                //for (int i = 0; i < valueArray.Length; i++)
+                //    if (valueArray.GetValue(i) == e.ClickedItem.Tag)
+                //    {
+                //        arrayContainsValue = true;
+                //        break;
+                //    }
+
+                //if (arrayContainsValue)
+                //{
+                //}
+                //{
+                //    object o = a.GetValue(i);
+                //}
+
                 RefreshAll();
                 return;
             }
             else
             {
                 pi.SetValue(SelectedObject, e.ClickedItem.Tag);
+                OnValueChanged?.Invoke(Tree, new EventArgs());
                 RefreshAll();
                 return;
             }
         }
 
-        private void ShowContextMenu(string propertyName, Point location)
+        private void ShowContextMenu(TreeNode node, Point location)
         {
-            PropertyInfo pi = ObjectType.GetProperty(propertyName);
-            if (pi == null) return; // Property doesn't exist, abort
+            PropertyInfo pi = SelectedObjectType.GetProperty(node.Name);
+            if (pi == null)
+            {
+                // Property is a flight group
+                if ((node.Level > 0) && (SelectedObjectType.GetProperty(node.Parent.Name).GetCustomAttribute<PlayersFGParentNodeAttribute>() != null))
+                    ShowContextMenuForPlayerFlightGroup(node, location);
+                return;
+            }
 
             ContextMenu.Items.Clear();
 
             if (pi.PropertyType.IsEnum) // Property type is an enum
-                AddEnumToContextMenu(pi.PropertyType, ContextMenu.Items);
+                AddEnumToContextMenu(ContextMenu.Items, pi.PropertyType, pi.GetValue(SelectedObject));
             else if (pi.PropertyType.IsArray && pi.PropertyType.GetElementType().IsEnum) // Property type is an array of enums
-                AddEnumToContextMenu(pi.PropertyType.GetElementType(), ContextMenu.Items);
+                AddEnumToContextMenu(ContextMenu.Items, pi.PropertyType.GetElementType(), null); // TODO: selected values
             else if (pi.GetCustomAttribute<DatabaseSourceAttribute>() != null) // Property is a database entry ID
                 AddDBEntriesToContextMenu(ContextMenu.Items, pi.GetCustomAttribute<DatabaseSourceAttribute>());
             else if (pi.GetCustomAttribute<IntegerSourceAttribute>() != null) // Property is an integer
                 AddIntegersToContextMenu(ContextMenu.Items, pi.GetCustomAttribute<IntegerSourceAttribute>());
 
             if (ContextMenu.Items.Count == 0) return; // No items, nothing to show
+            ContextMenu.Show(Tree, location);
+        }
+
+        private void ShowContextMenuForPlayerFlightGroup(TreeNode node, Point location)
+        {
+            ToolStripMenuItem tsmi;
+
+            ContextMenu.Items.Clear();
+            tsmi = (ToolStripMenuItem)ContextMenu.Items.Add("Aircraft");
+            AddDBEntriesToContextMenu(tsmi.DropDownItems, new DatabaseSourceAttribute(typeof(DBEntryUnit), false, DatabaseSourceAttributeSpecial.PlayerAircraft));
+            tsmi = (ToolStripMenuItem)ContextMenu.Items.Add("Carrier");
+            AddDBEntriesToContextMenu(tsmi.DropDownItems, new DatabaseSourceAttribute(typeof(DBEntryUnit), false, DatabaseSourceAttributeSpecial.Carriers));
+            tsmi = (ToolStripMenuItem)ContextMenu.Items.Add("Count");
+            AddIntegersToContextMenu(tsmi.DropDownItems, new IntegerSourceAttribute(1, Toolbox.MAXIMUM_FLIGHT_GROUP_SIZE));
+            tsmi = (ToolStripMenuItem)ContextMenu.Items.Add("Task");
+            AddEnumToContextMenu(tsmi.DropDownItems, typeof(MissionTemplateFlightGroupTask), null);
+            
             ContextMenu.Show(Tree, location);
         }
 
@@ -243,7 +306,27 @@ namespace BriefingRoom4DCSWorld.Forms
 
             ToolStripMenuItem tsmi;
 
-            foreach (DBEntry entry in Database.Instance.GetAllEntries(dsa.DBEntryType))
+            List<DBEntry> validEntries = new List<DBEntry>();
+            foreach (DBEntry e in Database.Instance.GetAllEntries(dsa.DBEntryType))
+            {
+                // Only look for player aircraft
+                if (dsa.DBEntryType == typeof(DBEntryUnit))
+                {
+                    switch (dsa.Special)
+                    {
+                        case DatabaseSourceAttributeSpecial.Carriers:
+                            if (((DBEntryUnit)e).Families.Intersect(Toolbox.SHIP_CARRIER_FAMILIES).Count() == 0)
+                                continue;
+                            break;
+                        case DatabaseSourceAttributeSpecial.PlayerAircraft:
+                            if (!((DBEntryUnit)e).AircraftData.PlayerControllable) continue;
+                            break;
+                    }
+                }
+                validEntries.Add(e);
+            }
+
+            foreach (DBEntry entry in validEntries)
             {
                 if (!string.IsNullOrEmpty(entry.GUICategory) &&
                     !itemCollection.ContainsKey(entry.GUICategory))
@@ -257,7 +340,7 @@ namespace BriefingRoom4DCSWorld.Forms
             }
             GUITools.SortToolStripItemCollection(itemCollection);
 
-            foreach (DBEntry entry in Database.Instance.GetAllEntries(dsa.DBEntryType))
+            foreach (DBEntry entry in validEntries)
             {
                 if (string.IsNullOrEmpty(entry.GUICategory))
                     tsmi = (ToolStripMenuItem)itemCollection.Add(entry.GUIDisplayName);
@@ -272,11 +355,12 @@ namespace BriefingRoom4DCSWorld.Forms
             }
         }
 
-        private void AddEnumToContextMenu(Type enumType, ToolStripItemCollection itemCollection)
+        private void AddEnumToContextMenu(ToolStripItemCollection itemCollection, Type enumType, object value)
         {
             foreach (object e in Enum.GetValues(enumType))
             {
-                ToolStripItem item = itemCollection.Add(GetEnumDisplayName(enumType, e));
+                ToolStripMenuItem item = (ToolStripMenuItem)itemCollection.Add(GetEnumDisplayName(enumType, e));
+                item.Checked = (e == value);
                 item.Tag = e;
                 item.ToolTipText = GetEnumToolTip(enumType, e);
             }

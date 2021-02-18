@@ -1,8 +1,7 @@
 ﻿/*
 ==========================================================================
 This file is part of Briefing Room for DCS World, a mission
-generator for DCS World, by @akaAgar
-(https://github.com/akaAgar/briefing-room-for-dcs)
+generator for DCS World, by @akaAgar (https://github.com/akaAgar/briefing-room-for-dcs)
 
 Briefing Room for DCS World is free software: you can redistribute it
 and/or modify it under the terms of the GNU General Public License
@@ -15,27 +14,28 @@ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Briefing Room for DCS World.
-If not, see https://www.gnu.org/licenses/
+along with Briefing Room for DCS World. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using System;
-
-namespace BriefingRoom4DCSWorld.Attributes
+namespace BriefingRoom4DCSWorld
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DatabaseSourceAttribute : Attribute
+    /// <summary>
+    /// Enumerates various mission types (single player, cooperative...)
+    /// </summary>
+    public enum MissionPlayersType
     {
-        public Type DBEntryType { get; }
-        public bool AllowRandom { get; }
-        public DatabaseSourceAttributeSpecial Special { get; }
-
-        public DatabaseSourceAttribute(Type dbEntryType, bool allowRandom = false, DatabaseSourceAttributeSpecial special = DatabaseSourceAttributeSpecial.None)
-        {
-            DBEntryType = dbEntryType;
-            AllowRandom = allowRandom;
-            Special = special;
-        }
+        /// <summary>
+        /// One-player mission.
+        /// </summary>
+        SinglePlayer,
+        /// <summary>
+        /// Multiplayer mission, all players are on the same side.
+        /// </summary>
+        Cooperative,
+        /// <summary>
+        /// Multiplayer mission, players on both sides.
+        /// </summary>
+        Versus
     }
 }

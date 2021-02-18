@@ -31,7 +31,7 @@ namespace BriefingRoom4DCSWorld.Template
     /// <summary>
     /// A mission template, to be used as input in the MissionGenerator class.
     /// </summary>
-    [TreeViewExtraNodes("Context", "Environment", "Options")]
+    [TreeViewExtraNodes("Environment", "Options")]
     public class MissionTemplate : IDisposable
     {
         /// <summary>
@@ -216,28 +216,31 @@ namespace BriefingRoom4DCSWorld.Template
         [DatabaseSource(typeof(DBEntryUnitMod))]
         public string[] OptionsUnitMods { get; set; }
 
+        [PlayersFGParentNode()]
+        public MissionPlayersType Players { get; set; }
+
         /// <summary>
         /// Multiplayer flight groups.
         /// If any flight group is specified here, the mission then becomes a multiplayer mission and all values
         /// in the "Player, single player only" are ignored.
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionBlue")]
-        public MissionTemplateMPFlightGroup[] PlayerMPFlightGroups { get; set; } = new MissionTemplateMPFlightGroup[0];
+        [TreeViewParentNode("Players")]
+        public MissionTemplateFlightGroup[] PlayerFlightGroups { get; set; } = new MissionTemplateFlightGroup[0];
 
         /// <summary>
         /// Type of aircraft the player will fly.
         /// As with all values in the "Player, single player only" category, this value is ignored if any
-        /// flight group is specified in <see cref="PlayerMPFlightGroups" />, the multiplayer flight groups
+        /// flight group is specified in <see cref="PlayerFlightGroups" />, the multiplayer flight groups
         /// are then used instead.
         /// </summary>
-        [TreeViewParentNode("ContextCoalitionBlue")]
+        [TreeViewParentNode("Players")]
         public string PlayerSPAircraft { get { return PlayerSPAircraft_; } set { PlayerSPAircraft_ = TemplateTools.CheckValuePlayerAircraft(value); } }
         private string PlayerSPAircraft_;
 
         /// <summary>
         /// Number of AI wingmen in the player's flight group.
         /// As with all values in the "Player, single player only" category, this value is ignored if any
-        /// flight group is specified in <see cref="PlayerMPFlightGroups" />, the multiplayer flight groups
+        /// flight group is specified in <see cref="PlayerFlightGroups" />, the multiplayer flight groups
         /// are then used instead.
         /// </summary>
         [TreeViewParentNode("Players")]
@@ -333,12 +336,13 @@ namespace BriefingRoom4DCSWorld.Template
             OptionsUnitMods = new string[0];
 
             CoalitionAlliesSkillLevel = BRSkillLevel.Random;
+            Players = MissionPlayersType.SinglePlayer;
             PlayerEscortCAP = 0;
             PlayerEscortSEAD = 0;
             CoalitionAlliesAirDefense = AmountN.Random;
             PlayerStartLocation = PlayerStartLocation.Runway;
 
-            PlayerMPFlightGroups = new MissionTemplateMPFlightGroup[0];
+            PlayerFlightGroups = new MissionTemplateFlightGroup[] { new MissionTemplateFlightGroup() };
             PlayerSPAircraft = TemplateTools.CheckValuePlayerAircraft(Database.Instance.Common.DefaultPlayerAircraft);
             PlayerSPWingmen = 1;
             PlayerSPCarrier = "";
@@ -391,15 +395,17 @@ namespace BriefingRoom4DCSWorld.Template
                 OptionsUnitMods = ini.GetValueArray<string>("Options", "UnitMods");
 
                 CoalitionAlliesSkillLevel = ini.GetValue("Player", "AISkillLevel", CoalitionAlliesSkillLevel);
+                Players = ini.GetValue("Player", "Player", Players);
                 PlayerEscortCAP = ini.GetValue("Player", "EscortCAP", PlayerEscortCAP);
                 PlayerEscortSEAD = ini.GetValue("Player", "EscortSEAD", PlayerEscortSEAD);
                 CoalitionAlliesAirDefense = ini.GetValue("Player", "FriendlyAirDefense", CoalitionAlliesAirDefense);
                 PlayerStartLocation = ini.GetValue("Player", "StartLocation", PlayerStartLocation);
 
                 int fgFlightGroupCount = Math.Max(0, ini.GetValue<int>("PlayerMP", "FGCount"));
-                PlayerMPFlightGroups = new MissionTemplateMPFlightGroup[fgFlightGroupCount];
+                PlayerFlightGroups = new MissionTemplateFlightGroup[fgFlightGroupCount];
                 for (int i = 0; i < fgFlightGroupCount; i++)
-                    PlayerMPFlightGroups[i] = new MissionTemplateMPFlightGroup(ini, "PlayerMP", $"FG{i:000}");
+                    PlayerFlightGroups[i] = new MissionTemplateFlightGroup(ini, "PlayerMP", $"FG{i:000}");
+                if (PlayerFlightGroups.Length == 0) PlayerFlightGroups = new MissionTemplateFlightGroup[] { new MissionTemplateFlightGroup() };
 
                 PlayerSPAircraft = ini.GetValue("PlayerSP", "Aircraft", PlayerSPAircraft);
                 PlayerSPWingmen = ini.GetValue("PlayerSP", "Wingmen", PlayerSPWingmen);
@@ -451,6 +457,7 @@ namespace BriefingRoom4DCSWorld.Template
                 ini.SetValueArray("Options", "ScriptExtensions", OptionsScriptExtensions);
                 ini.SetValueArray("Options", "UnitMods", OptionsUnitMods);
 
+                ini.SetValue("Player", "Player", Players);
                 ini.SetValue("Player", "AISkillLevel", CoalitionAlliesSkillLevel);
                 ini.SetValue("Player", "EscortCAP", PlayerEscortCAP);
                 ini.SetValue("Player", "EscortSEAD", PlayerEscortSEAD);
@@ -462,9 +469,9 @@ namespace BriefingRoom4DCSWorld.Template
                 ini.SetValue("PlayerSP", "Wingmen.SkillLevel", CoalitionAlliesSkillLevel);
                 ini.SetValue("PlayerSP", "Carrier", PlayerSPCarrier);
 
-                ini.SetValue("PlayerMP", "FGCount", PlayerMPFlightGroups.Length);
-                for (int i = 0; i < PlayerMPFlightGroups.Length; i++)
-                    PlayerMPFlightGroups[i].SaveToFile(ini, "PlayerMP", $"FG{i:000}");
+                ini.SetValue("PlayerMP", "FGCount", PlayerFlightGroups.Length);
+                for (int i = 0; i < PlayerFlightGroups.Length; i++)
+                    PlayerFlightGroups[i].SaveToFile(ini, "PlayerMP", $"FG{i:000}");
 
                 ini.SetValue("Theater", "ID", Theater);
                 ini.SetValue("Theater", "RegionsCoalitions", TheaterRegionsCoalitions);
@@ -491,21 +498,9 @@ namespace BriefingRoom4DCSWorld.Template
         /// <returns>The number of player-controllable aircraft</returns>
         public int GetPlayerCount()
         {
-            if (GetMissionType() == MissionType.SinglePlayer) return 1;
+            if (Players == MissionPlayersType.SinglePlayer) return 1;
 
-            return (from MissionTemplateMPFlightGroup pfg in PlayerMPFlightGroups select pfg.Count).Sum();
-        }
-
-        /// <summary>
-        /// Returns the type of mission (single player, cooperative...) this template will generate.
-        /// </summary>
-        /// <returns>The type of mission</returns>
-        public MissionType GetMissionType()
-        {
-            if (PlayerMPFlightGroups.Length == 0)
-                return MissionType.SinglePlayer;
-
-            return MissionType.Cooperative;
+            return (from MissionTemplateFlightGroup pfg in PlayerFlightGroups select pfg.Count).Sum();
         }
 
         /// <summary>
@@ -514,7 +509,7 @@ namespace BriefingRoom4DCSWorld.Template
         /// <returns>Number of parking spots required</returns>
         public int GetMissionPackageRequiredParkingSpots()
         {
-            if (GetMissionType() == MissionType.SinglePlayer)
+            if (Players == MissionPlayersType.SinglePlayer)
             {
                 if (PlayerStartLocation == PlayerStartLocation.Runway) return 0; // Player and wingmen start on the runway, AI escort start in air above the airbase
                 return PlayerSPWingmen_ + 1 + PlayerEscortCAP_ + PlayerEscortSEAD_;

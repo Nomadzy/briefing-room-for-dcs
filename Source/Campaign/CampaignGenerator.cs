@@ -169,7 +169,7 @@ namespace BriefingRoom4DCSWorld.Campaign
             template.CoalitionAlliesSkillLevel = GetSkillLevel(campaignTemplate.SituationFriendlyAirForce, CampaignDifficultyVariation.Steady, 0, 0);
             template.PlayerEscortCAP = Toolbox.RandomFrom(2, 2, 2, 2, 3, 4, 4);
             template.PlayerEscortSEAD = Toolbox.RandomFrom(2, 2, 2, 2, 3, 4, 4);
-            template.PlayerMPFlightGroups = new MissionTemplateMPFlightGroup[0];
+            template.PlayerFlightGroups = new MissionTemplateFlightGroup[0];
             template.PlayerSPAircraft = campaignTemplate.PlayerAircraft;
             template.PlayerSPWingmen = Toolbox.RandomFrom(1, 1, 1, 1, 2, 3, 3);
             template.PlayerStartLocation = campaignTemplate.PlayerStartLocation;

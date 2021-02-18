@@ -200,10 +200,10 @@ namespace BriefingRoom4DCSWorld.DB
                     if (!File.Exists($"{BRPaths.INCLUDE_OGG}{f}.ogg"))
                         DebugLog.Instance.WriteLine($"File \"Include\\Ogg\\{f}.ogg\" doesn't exist.", 1, DebugLogMessageErrorLevel.Warning);
 
-                CommonOGGForGameMode = new string[Toolbox.EnumCount<MissionType>()][];
+                CommonOGGForGameMode = new string[Toolbox.EnumCount<MissionPlayersType>()][];
                 for (i = 0; i < CommonOGGForGameMode.Length; i++)
                 {
-                    CommonOGGForGameMode[i] = ini.GetValueArray<string>("Include", $"CommonOgg.{(MissionType)i}");
+                    CommonOGGForGameMode[i] = ini.GetValueArray<string>("Include", $"CommonOgg.{(MissionPlayersType)i}");
                     foreach (string f in CommonOGGForGameMode[i])
                         if (!File.Exists($"{BRPaths.INCLUDE_OGG}{f}.ogg"))
                             DebugLog.Instance.WriteLine($"File \"Include\\Ogg\\{f}.ogg\" doesn't exist.", 1, DebugLogMessageErrorLevel.Warning);
