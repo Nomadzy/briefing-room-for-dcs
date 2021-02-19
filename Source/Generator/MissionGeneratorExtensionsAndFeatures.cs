@@ -57,7 +57,7 @@ namespace BriefingRoom4DCSWorld.Generator
         {
             int i, j;
 
-            DBEntryExtension[] extensions = Database.Instance.GetEntries<DBEntryExtension>(template.OptionsScriptExtensions);
+            DBEntryExtension[] extensions = Database.Instance.GetEntries<DBEntryExtension>(template.ScriptExtensions);
             foreach (DBEntryExtension extension in extensions)
                 AddIncludedFiles(mission, extension);
 

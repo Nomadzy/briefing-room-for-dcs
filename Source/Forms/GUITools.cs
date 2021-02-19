@@ -20,6 +20,8 @@ If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using BriefingRoom4DCSWorld.DB;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -163,14 +165,16 @@ namespace BriefingRoom4DCSWorld.Forms
                 itemCollection.Add(oItem);
         }
 
-        public class ToolStripItemComparer : System.Collections.IComparer
+        public static string GetEnumDisplayName(Type enumType, object value)
         {
-            public int Compare(object x, object y)
-            {
-                ToolStripItem oItem1 = (ToolStripItem)x;
-                ToolStripItem oItem2 = (ToolStripItem)y;
-                return string.Compare(oItem1.Text, oItem2.Text, true);
-            }
+            string displayName = Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}");
+            if (!string.IsNullOrEmpty(displayName)) return displayName;
+            return value.ToString();
+        }
+
+        public static string GetEnumToolTip(Type enumType, object value)
+        {
+            return Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}.ToolTip");
         }
     }
 }

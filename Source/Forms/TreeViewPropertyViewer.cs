@@ -41,7 +41,7 @@ namespace BriefingRoom4DCSWorld.Forms
 
         private readonly ContextMenuStrip ContextMenu;
 
-        private string RandomString { get { return GetEnumDisplayName(typeof(AmountN), AmountN.Random); } }
+        private string RandomString { get { return GUITools.GetEnumDisplayName(typeof(AmountN), AmountN.Random); } }
 
         public event EventHandler OnValueChanged = null;
 
@@ -110,16 +110,31 @@ namespace BriefingRoom4DCSWorld.Forms
                 {
                     tn.Nodes.Clear();
                     if (pi.PropertyType.GetElementType().IsEnum)
-                    {
                         foreach (object o in ((Array)pi.GetValue(SelectedObject)))
-                            tn.Nodes.Add(o.ToString());
+                            tn.Nodes.Add(o.ToString(), GUITools.GetEnumDisplayName(pi.PropertyType.GetElementType(), o));
+                    else if (pi.PropertyType.GetElementType() == typeof(string))
+                    {
+                        if (pi.GetCustomAttribute<DatabaseSourceAttribute>() != null)
+                        {
+                            DatabaseSourceAttribute dsa = pi.GetCustomAttribute<DatabaseSourceAttribute>();
+
+                            foreach (object o in (Array)pi.GetValue(SelectedObject))
+                            {
+                                DBEntry entry = Database.Instance.GetEntry(dsa.DBEntryType, o.ToString());
+                                tn.Nodes.Add(o.ToString(), (entry != null) ? entry.GUIDisplayName : o.ToString());
+                            }
+                        }
+                        else
+                            foreach (object o in (Array)pi.GetValue(SelectedObject))
+                                tn.Nodes.Add(o.ToString(), o.ToString());
                     }
+                    tn.Expand();
 
                     continue;
                 }
 
                 if (pi.PropertyType.IsEnum)
-                    valueString = GetEnumDisplayName(pi.PropertyType, value);
+                    valueString = GUITools.GetEnumDisplayName(pi.PropertyType, value);
                 else if (pi.GetCustomAttribute<DatabaseSourceAttribute>() != null)
                 {
                     DatabaseSourceAttribute dsa = pi.GetCustomAttribute<DatabaseSourceAttribute>();
@@ -160,18 +175,6 @@ namespace BriefingRoom4DCSWorld.Forms
             }
         }
 
-        private string GetEnumDisplayName(Type enumType, object value)
-        {
-            string displayName = Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}");
-            if (!string.IsNullOrEmpty(displayName)) return displayName;
-            return value.ToString();
-        }
-
-        private string GetEnumToolTip(Type enumType, object value)
-        {
-            return Database.Instance.Strings.GetString("Enums", $"{enumType.Name}.{value}.ToolTip");
-        }
-
         private string GetPropertyDisplayName(string internalName)
         {
             string displayName = Database.Instance.Strings.GetString(SelectedObjectType.Name, internalName);
@@ -208,14 +211,33 @@ namespace BriefingRoom4DCSWorld.Forms
         private void OnContextMenuItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             // No selected node or no clicked item, abort
-            if ((Tree.SelectedNode == null) || (e.ClickedItem == null) || (e.ClickedItem.Tag == null))
+            if ((Tree.SelectedNode == null) || (e.ClickedItem == null)) return;
+
+            if (e.ClickedItem.Tag == null)
+            {
+                if (Tree.SelectedNode.Level == 0) return;
+                PropertyInfo parentPi = SelectedObjectType.GetProperty(Tree.SelectedNode.Parent.Name);
+                if (parentPi.PropertyType.IsArray)
+                {
+
+                }
                 return;
+            }
 
             PropertyInfo pi = SelectedObjectType.GetProperty(Tree.SelectedNode.Name);
             if (pi == null) return; // Property doesn't exist, abort
 
             if (pi.PropertyType.IsArray)
             {
+                if (pi.PropertyType.GetElementType() == typeof(string))
+                {
+                    List<string> valuesList = ((string[])pi.GetValue(SelectedObject)).Distinct().ToList();
+                    string newValue = (string)e.ClickedItem.Tag;
+                    if (valuesList.Contains(newValue)) valuesList.Remove(newValue);
+                    else valuesList.Add(newValue);
+                    pi.SetValue(SelectedObject, valuesList.ToArray());
+                }
+
                 // TODO: arrays
 
                 //Type arrayType = pi.PropertyType.GetElementType();
@@ -258,16 +280,25 @@ namespace BriefingRoom4DCSWorld.Forms
 
         private void ShowContextMenu(TreeNode node, Point location)
         {
+            ContextMenu.Items.Clear();
+
             PropertyInfo pi = SelectedObjectType.GetProperty(node.Name);
             if (pi == null)
             {
+                if (node.Level == 0) return;
+
                 // Property is a flight group
-                if ((node.Level > 0) && (SelectedObjectType.GetProperty(node.Parent.Name).GetCustomAttribute<PlayersFGParentNodeAttribute>() != null))
+                if (SelectedObjectType.GetProperty(node.Parent.Name).GetCustomAttribute<PlayersFGParentNodeAttribute>() != null)
                     ShowContextMenuForPlayerFlightGroup(node, location);
+                else if (SelectedObjectType.GetProperty(node.Parent.Name).PropertyType.IsArray)
+                {
+                    ContextMenu.Items.Add(Database.Instance.Strings.GetString("GUI", "Remove"));
+                    ContextMenu.Show(Tree, location);
+                    return;
+                }
+
                 return;
             }
-
-            ContextMenu.Items.Clear();
 
             if (pi.PropertyType.IsEnum) // Property type is an enum
                 AddEnumToContextMenu(ContextMenu.Items, pi.PropertyType, pi.GetValue(SelectedObject));
@@ -359,10 +390,12 @@ namespace BriefingRoom4DCSWorld.Forms
         {
             foreach (object e in Enum.GetValues(enumType))
             {
-                ToolStripMenuItem item = (ToolStripMenuItem)itemCollection.Add(GetEnumDisplayName(enumType, e));
+                ToolStripMenuItem item = (ToolStripMenuItem)itemCollection.Add(GUITools.GetEnumDisplayName(enumType, e));
+                item.BackColor = ContextMenu.BackColor;
+                item.ForeColor = ContextMenu.ForeColor;
                 item.Checked = (e == value);
                 item.Tag = e;
-                item.ToolTipText = GetEnumToolTip(enumType, e);
+                item.ToolTipText = GUITools.GetEnumToolTip(enumType, e);
             }
         }
 

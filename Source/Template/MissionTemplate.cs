@@ -205,9 +205,8 @@ namespace BriefingRoom4DCSWorld.Template
         /// <summary>
         /// Script extensions to include in this mission to provide additional features.
         /// </summary>
-        [TreeViewParentNode("Options")]
         [DatabaseSource(typeof(DBEntryExtension))]
-        public string[] OptionsScriptExtensions { get; set; }
+        public string[] ScriptExtensions { get; set; }
 
         /// <summary>
         /// Which unit mods should be enabled in this mission? Make sure units mods are installed and active in your version of DCS World or the units won't be spawned.
@@ -332,7 +331,7 @@ namespace BriefingRoom4DCSWorld.Template
             OptionsEndMode = MissionEndMode.NoEnd;
             OptionsPreferences = new MissionTemplatePreferences[0];
             OptionsRealism = new RealismOption[] { RealismOption.NoBDA };
-            OptionsScriptExtensions = new string[0];
+            ScriptExtensions = new string[0];
             OptionsUnitMods = new string[0];
 
             CoalitionAlliesSkillLevel = BRSkillLevel.Random;
@@ -391,7 +390,7 @@ namespace BriefingRoom4DCSWorld.Template
                 OptionsEndMode = ini.GetValue("Options", "EndMode", OptionsEndMode);
                 OptionsPreferences = ini.GetValueArray<MissionTemplatePreferences>("Options", "Preferences");
                 OptionsRealism = ini.GetValueArray<RealismOption>("Options", "Realism");
-                OptionsScriptExtensions = ini.GetValueArray<string>("Options", "ScriptExtensions");
+                ScriptExtensions = ini.GetValueArray<string>("Options", "ScriptExtensions");
                 OptionsUnitMods = ini.GetValueArray<string>("Options", "UnitMods");
 
                 CoalitionAlliesSkillLevel = ini.GetValue("Player", "AISkillLevel", CoalitionAlliesSkillLevel);
@@ -454,7 +453,7 @@ namespace BriefingRoom4DCSWorld.Template
                 ini.SetValue("Options", "EndMode", OptionsEndMode);
                 ini.SetValueArray("Options", "Preferences", OptionsPreferences);
                 ini.SetValueArray("Options", "Realism", OptionsRealism);
-                ini.SetValueArray("Options", "ScriptExtensions", OptionsScriptExtensions);
+                ini.SetValueArray("Options", "ScriptExtensions", ScriptExtensions);
                 ini.SetValueArray("Options", "UnitMods", OptionsUnitMods);
 
                 ini.SetValue("Player", "Player", Players);

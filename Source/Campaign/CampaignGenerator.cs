@@ -163,7 +163,7 @@ namespace BriefingRoom4DCSWorld.Campaign
             template.OptionsEndMode = MissionEndMode.NoEnd;
             template.OptionsPreferences = campaignTemplate.OptionsPreferences.ToArray();
             template.OptionsRealism = campaignTemplate.OptionsRealism.ToArray();
-            template.OptionsScriptExtensions = new string[0];
+            template.ScriptExtensions = new string[0];
             template.OptionsUnitMods = campaignTemplate.OptionsUnitMods;
 
             template.CoalitionAlliesSkillLevel = GetSkillLevel(campaignTemplate.SituationFriendlyAirForce, CampaignDifficultyVariation.Steady, 0, 0);

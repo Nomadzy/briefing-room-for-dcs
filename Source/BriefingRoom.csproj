@@ -89,6 +89,7 @@
     <Compile Include="Forms\CampaignCreatorForm.Designer.cs">
       <DependentUpon>CampaignCreatorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ToolStripItemComparer.cs" />
     <Compile Include="Forms\TreeViewPropertyViewer.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Media\ImageMaker.cs" />
